@@ -1,2 +1,0 @@
-pip install google-api-python-client google-auth google-auth-httplib2 google-auth-oauthlib
-pip install gspread
