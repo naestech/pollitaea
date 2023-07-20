@@ -38,7 +38,14 @@
     "@react-navigation/bottom-tabs": "^6.3.2",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.0.2",
+    "@tamagui/babel-plugin": "^1.43.13",
+    "@tamagui/config": "^1.43.13",
+    "@tamagui/font-fira-mono": "^1.43.13",
+    "@tamagui/lucide-icons": "^1.43.13",
+    "@tamagui/shorthands": "^1.43.13",
+    "@tamagui/themes": "^1.43.13",
     "apisauce": "2.1.5",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.4",
     "date-fns": "^2.29.2",
     "expo": "^48.0.15",
     "expo-application": "~5.1.1",
@@ -64,7 +71,8 @@
     "react-native-screens": "~3.20.0",
     "reactotron-mst": "3.1.4",
     "reactotron-react-js": "^3.3.7",
-    "reactotron-react-native": "5.0.3"
+    "reactotron-react-native": "5.0.3",
+    "tamagui": "^1.43.13"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -166,7 +174,8 @@
       "expect": false,
       "describe": false,
       "jest": false,
-      "it": false
+      "it": false,
+      "TAMAGUI_TARGET": true
     },
     "rules": {
       "@typescript-eslint/ban-ts-ignore": 0,

@@ -30,7 +30,7 @@ Alright, first we'll set up our environment then we'll setup the project locally
 
 - Clone project
 - Install packages
-  -  `yarn` in the root of the project
+  - `yarn` in the root of the project
 - start the app
   - `expo start --android`
 
@@ -40,7 +40,7 @@ Included in an Ignite boilerplate project is the `app` directory. This is a dire
 
 The inside of the `app` directory looks similar to the following:
 
-```
+```text
 app
 ├── components
 ├── config
