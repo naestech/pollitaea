@@ -1,9 +1,9 @@
 import { shorthands } from "@tamagui/shorthands"
 
 import { createGenericFont } from "@tamagui/config"
-import { themes, tokens } from "@tamagui/themes"
+import { color, radius, size, space, themes, zIndex } from "@tamagui/themes"
 
-import { createTamagui } from "tamagui"
+import { createTamagui, createTokens } from "tamagui"
 
 const bodyFont = createGenericFont(
   "Inter_600SemiBold",
@@ -36,7 +36,30 @@ const bodyFont = createGenericFont(
   },
 )
 
-export const TamaguiConfig = createTamagui({
+const tokens = createTokens({
+  color: {
+    ...color,
+    primary: "#017ACB",
+    primaryBg: "#D1E1CB",
+    accent: "#531253",
+    accentBg: "#F7DEFF",
+    background: "#E8D8C7",
+    juicyGreen: "#004643",
+  },
+  radius,
+  zIndex,
+  space,
+  size,
+
+  // testing
+  icon: {
+    sm: 16,
+    md: 24,
+    lg: 32,
+  },
+})
+
+export default createTamagui({
   themes,
 
   tokens,
