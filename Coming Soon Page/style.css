@@ -9,8 +9,8 @@
 .navbar{
     background-color:#F2EAD1;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: right;
+    align-items: right;
 }
 
 .logo{
@@ -20,12 +20,24 @@
     cursor: pointer;
 }
 
+.container{
+    background-color:#F2EAD1;
+    display: flex;
+    justify-content: left;
+}
+
+.top-left-image {
+    position: fixed;
+    margin-top: -15%;
+    margin-left: -15%;
+}
+
 .hero{
     width: 100%;
     height: 100vh;
     background-color:#F2EAD1;
     background-size: cover;
-    background-position: center;
+    background-position: right;
     padding: 10px 10%;
     color: black;
 }
