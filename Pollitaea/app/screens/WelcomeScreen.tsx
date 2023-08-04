@@ -34,6 +34,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
   const [validEmail, setValidEmail] = useState(true)
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
+  const [validPasswordConfirm, setValidPasswordConfirm] = useState(true)
   const [validpassword, setValidPassword] = useState(true)
   const [phone, setPhone] = useState("")
   const [validPhone, setValidPhone] = useState(true)
@@ -49,15 +50,28 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
 
   const handleAuth = () => {
     setStatus("submitting")
-    if (emailVal.test(email)) setValidEmail(false)
-    if (password.length < 8) setValidPassword(false)
+    if (username.length < 4) setValidUsername(false)
+    if (emailVal.test(email) || email.length == 0) setValidEmail(false)
+    if (password.length < 6) setValidPassword(false)
     if (!phone && numberPattern.test(phone)) setValidPhone(false)
+    if (password != passwordConfirm) setValidPasswordConfirm(false)
 
-    if (!isLogin && validEmail && validpassword && validPhone) {
+    if (
+      !isLogin &&
+      validEmail &&
+      validUsername &&
+      validpassword &&
+      validPhone &&
+      validPasswordConfirm
+    ) {
       console.log('setStatus("success")')
       // run updates
       // Progress to next page
-    } else if (isLogin && validEmail && validpassword) {
+    } else if (isLogin) {
+      if (validEmail && validpassword) {
+        console.log('setStatus("errored")')
+        console.log('setStatus("bad login creds")')
+      }
       console.log('setStatus("success")')
       // run updates
       // Progress to next page
@@ -88,25 +102,48 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             borderRadius={5}
             width="90%"
             color="$accent"
-            placeholder="First Name"
+            placeholder="Erykah"
             backgroundColor="$accentBg"
             value={fName}
-            aria-label="password"
+            aria-label="first-name"
+            textContentType="givenName"
             importantForAutofill="auto"
-            onChangeText={(e) => setFName(e)}
+            display={isLogin ? "none" : undefined}
+            onChangeText={(e) => {
+              setFName(e)
+            }}
           />
           <Input
             borderRadius={5}
             width="90%"
             color="$accent"
-            placeholder={validUsername ? "Username" : "Username must be longer than 5 characters"}
+            placeholder="Badu"
+            backgroundColor="$accentBg"
+            value={lName}
+            aria-label="last-name"
+            textContentType="familyName"
+            importantForAutofill="auto"
+            display={isLogin ? "none" : undefined}
+            onChangeText={(e) => {
+              setLName(e)
+            }}
+          />
+          <Input
+            borderRadius={5}
+            width="90%"
+            color="$accent"
+            placeholder={validUsername ? "Username" : "Longer username"}
             backgroundColor="$accentBg"
             value={username}
             aria-label="username"
             importantForAutofill="auto"
-            onChangeText={(e) => setUsername(e)}
+            display={isLogin ? "none" : undefined}
+            onChangeText={(e) => {
+              setValidUsername(true)
+              setUsername(e)
+            }}
           />
-          
+
           {/*Login form fields*/}
           <Input
             borderRadius={5}
@@ -116,8 +153,12 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             backgroundColor="$accentBg"
             value={email}
             aria-label="email"
+            textContentType="emailAddress"
             importantForAutofill="auto"
-            onChangeText={(e) => setEmail(e)}
+            onChangeText={(e) => {
+              setValidEmail(true)
+              setEmail(e)
+            }}
           />
           <Input
             borderRadius={5}
@@ -127,8 +168,12 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             backgroundColor="$accentBg"
             value={password}
             aria-label="password"
+            textContentType="password"
             importantForAutofill="auto"
-            onChangeText={(e) => setPassword(e)}
+            onChangeText={(e) => {
+              setValidPassword(true)
+              setPassword(e)
+            }}
           />
           <Input
             borderRadius={5}
@@ -138,8 +183,13 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             backgroundColor="$accentBg"
             value={passwordConfirm}
             aria-label="password"
+            textContentType="password"
             importantForAutofill="auto"
-            onChangeText={(e) => setPasswordConfirm(e)}
+            display={isLogin ? "none" : undefined}
+            onChangeText={(e) => {
+              setValidPasswordConfirm(true)
+              setPasswordConfirm(e)
+            }}
           />
           <Form.Trigger asChild disabled={status === "submitting" || status === "success"}>
             <Button size="$5" icon={status === "submitting" ? () => <Spinner /> : undefined}>
