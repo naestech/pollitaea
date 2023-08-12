@@ -58,6 +58,11 @@ app
 
 Ignite has some helpful tooling to make this app dev process easier. You can use as much or as little as you want but I recommend at least trying to generate a screen and seein the magic a bit. Maybe checking out the [template](/ignite/templates/screen/NAMEScreen.tsx.ejs) that the generators use.
 
+### Examples
+
+List available templates `npx ignite-cli generate --list`
+Generate new screen called Profile `npx ignite-cli generate screen Profile`
+
 ### ./ignite directory
 
 The `ignite` directory stores all things Ignite, including CLI and boilerplate items. Here you will find templates you can customize to help you get started with React Native.
