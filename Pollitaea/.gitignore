@@ -33,7 +33,6 @@ local.properties
 .cxx/
 
 # node.js
-#
 .env
 node_modules/
 npm-debug.log

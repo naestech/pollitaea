@@ -1,7 +1,4 @@
 /** @type {import('@babel/core').TransformOptions['plugins']} */
-
-process.env.TAMAGUI_TARGET = "native"
-
 const plugins = [
   [
     /** Enables baseUrl: "./" option in tsconfig.json to work @see https://github.com/entwicklerstube/babel-plugin-root-import */
@@ -20,9 +17,7 @@ const plugins = [
     },
   ],
   "@tamagui/babel-plugin",
-  ['transform-inline-environment-variables', {
-    include: ["TAMAGUI_TARGET"]
-  }],
+  "transform-inline-environment-variables",
   /** react-native-reanimated web support @see https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation/#web */
   "@babel/plugin-proposal-export-namespace-from",
   /** NOTE: This must be last in the plugins @see https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation/#babel-plugin */
