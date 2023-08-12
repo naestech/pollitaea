@@ -128,7 +128,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
   return (
     <Screen style={$containerInsets} preset="scroll">
       <View marginTop="$5" paddingHorizontal="$5" justifyContent="space-between" space="$5">
-        <Image source={welcomeLogo} marginHorizontal="auto" alt="Transparent logo" />
+        <Image source={welcomeLogo} paddingHorizontal="$4" alt="Transparent logo" />
         <Separator alignSelf="stretch" />
         <Form
           alignItems="center"
@@ -145,7 +145,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             color="$accent"
             placeholder="Erykah"
             backgroundColor="$accentBg"
-            marginHorizontal="auto"
+            paddingHorizontal="$4"
             value={fName}
             aria-label="first-name"
             textContentType="givenName"
@@ -161,7 +161,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             color="$accent"
             placeholder="Badu"
             backgroundColor="$accentBg"
-            marginHorizontal="auto"
+            paddingHorizontal="$4"
             value={lName}
             aria-label="last-name"
             textContentType="familyName"
@@ -177,7 +177,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             color="$accent"
             placeholder={validUsername ? "Username" : "Longer username"}
             backgroundColor="$accentBg"
-            marginHorizontal="auto"
+            paddingHorizontal="$4"
             value={username}
             aria-label="username"
             importantForAutofill="auto"
@@ -195,7 +195,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             color="$accent"
             placeholder={validEmail ? "Email" : "Enter a valid email"}
             backgroundColor="$accentBg"
-            marginHorizontal="auto"
+            paddingHorizontal="$4"
             value={email}
             aria-label="email"
             textContentType="emailAddress"
@@ -211,7 +211,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             color="$accent"
             placeholder={validPassword ? "Password" : "Enter a valid password"}
             backgroundColor="$accentBg"
-            marginHorizontal="auto"
+            paddingHorizontal="$4"
             value={password}
             aria-label="password"
             textContentType="password"
@@ -227,7 +227,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             color="$accent"
             placeholder="Password confirmation"
             backgroundColor="$accentBg"
-            marginHorizontal="auto"
+            paddingHorizontal="$4"
             value={passwordConfirm}
             aria-label="password"
             textContentType="password"
