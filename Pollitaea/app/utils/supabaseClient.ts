@@ -5,6 +5,7 @@ import * as SecureStore from "expo-secure-store"
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
 
+// These are only transpiled after being used for some reason
 console.log({
   supabaseAnonKey,
   supabaseUrl,

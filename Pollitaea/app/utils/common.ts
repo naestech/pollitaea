@@ -1,7 +1,5 @@
 import { ApiSecret } from "app/types/auth"
 import { api } from "../services/api/api"
-import { supabase } from "./supabaseClient"
-import { RootStore } from "app/models"
 
 /**
  * Fetch API Secret
