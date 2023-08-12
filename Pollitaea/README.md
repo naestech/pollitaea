@@ -30,7 +30,7 @@ Alright, first we'll set up our environment then we'll setup the project locally
 
 - Clone project
 - Install packages
-  -  `yarn` in the root of the project
+  - `yarn` in the root of the project
 - start the app
   - `expo start --android`
 
@@ -40,7 +40,7 @@ Included in an Ignite boilerplate project is the `app` directory. This is a dire
 
 The inside of the `app` directory looks similar to the following:
 
-```
+```text
 app
 ├── components
 ├── config
@@ -57,6 +57,11 @@ app
 ## Ignite Helpers
 
 Ignite has some helpful tooling to make this app dev process easier. You can use as much or as little as you want but I recommend at least trying to generate a screen and seein the magic a bit. Maybe checking out the [template](/ignite/templates/screen/NAMEScreen.tsx.ejs) that the generators use.
+
+### Examples
+
+List available templates `npx ignite-cli generate --list`
+Generate new screen called Profile `npx ignite-cli generate screen Profile`
 
 ### ./ignite directory
 
