@@ -151,9 +151,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             textContentType="givenName"
             importantForAutofill="auto"
             display={isLogin ? "none" : undefined}
-            onChangeText={(e) => {
-              setFName(e)
-            }}
+            onChangeText={setFName}
           />
           <Input
             borderRadius={5}
@@ -167,9 +165,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             textContentType="familyName"
             importantForAutofill="auto"
             display={isLogin ? "none" : undefined}
-            onChangeText={(e) => {
-              setLName(e)
-            }}
+            onChangeText={setLName}
           />
           <Input
             borderRadius={5}
