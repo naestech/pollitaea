@@ -1,22 +1,26 @@
 <script lang="ts">
-	import Voter from '$lib/assets/Voter.png';
 	import Logo from '$lib/assets/Logo.png';
+	import Voter from '$lib/assets/Voter.png';
+
 	const scriptURL =
 		'https://script.google.com/macros/s/AKfycbwHHnN8HF7AjBwyO_ehYqfot6Y5luCO3gBdda6Ww45Mxz_jMZ-XcN1z2KhwT9wLRqTmjg/exec';
-	// const message = document.getElementById('message');
+	let email = '';
+	let submitted = false;
+	let loading = false;
 
-	const handleSubmit = (e: any) => {
-		console.log(e);
-		// e.preventDefault();
-		// fetch(scriptURL, { method: 'POST', body: new FormData(form) })
-		// 	.then((response) => {
-		// 		message.innerHTML = 'Thank you for your interest!';
-		// 		setTimeout(function () {
-		// 			message.innerHTML = '';
-		// 		}, 5000);
-		// 		form.reset();
-		// 	})
-		// 	.catch((error) => console.error('Error!', error.message));
+	const handleAuth = () => {
+		loading = true;
+		console.log(email);
+		fetch(scriptURL, { method: 'post', body: JSON.stringify({ Email: email }) })
+			.then((res) => {
+				console.log('Successful Submit');
+			})
+			.catch(() => {
+				email = '';
+			})
+			.finally(() => (submitted = true));
+
+		loading = false;
 	};
 </script>
 
@@ -37,13 +41,28 @@
 
 	<div class="hero">
 		<h3>noun - /pohl-it-AY-uh/: knowledge is power</h3>
-
-		<form name="submit-to-google-sheet" class="form" method="post">
+		<form name="submit-to-google-sheet" class="form" on:submit={handleAuth}>
 			<p>Cast your vote with confidence. Coming soon!</p>
-			<input type="email" name="Email" placeholder="Enter your email." required />
-			<button type="submit">I'm In!</button>
+			<input
+				disabled={loading || submitted}
+				value={email}
+				on:change={(e) => {
+					email = e.currentTarget.value;
+				}}
+				type="email"
+				name="Email"
+				placeholder={submitted && email == ''
+					? 'Something went wrong during your form submission'
+					: 'Enter your email.'}
+				required
+			/>
+			<button disabled={loading || submitted || (submitted && email == '')} type="submit"
+				>I'm In!</button
+			>
 		</form>
-		<span id="message" />
+		{#if submitted}
+			<h3 class="h3">Thank you for your interest!</h3>
+		{/if}
 	</div>
 </body>
 
@@ -135,10 +154,5 @@
 		height: 70px;
 		width: 100px;
 		cursor: pointer;
-	}
-
-	span {
-		margin-top: 10px;
-		display: block;
 	}
 </style>
