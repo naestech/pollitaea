@@ -8,7 +8,7 @@ import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 import { api } from "app/services/api"
 import { SignUpResponse, APIError } from "app/types/auth"
 import { supabase } from "app/utils/supabaseClient"
-import { createToast } from "app/utils/common"
+import { createToast, fetchSecret } from "app/utils/common"
 
 const welcomeLogo = require("../../assets/images/logo.png")
 
@@ -65,7 +65,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
       } else {
         await api.apisauce
           .post<SignUpResponse, APIError>("/api/auth", {
-            // secret: await fetchSecret(),
+            secret: await fetchSecret(),
             email,
             password,
             phone,
