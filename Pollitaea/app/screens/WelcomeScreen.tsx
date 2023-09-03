@@ -38,9 +38,6 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
   const [lName, setLName] = useState("")
   const [username, setUsername] = useState("")
   const [validUsername, setValidUsername] = useState(true)
-  // const [gender, setGender] = useState<
-    // "male" | "female" | "nonbinary" | "other" | "Prefer not to say"
-  // >("other")
 
   const [isLogin, setIsLogin] = useState(true)
   const store = useStores()
@@ -65,6 +62,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
     if (!isLogin) {
       if (!(validEmail && validPassword && validPhone && validUsername && validPasswordConfirm)) {
         setStatus("off")
+        createToast(toast, "Invalid Inputs")
       } else {
         await api.apisauce
           .post<SignUpResponse, APIError>("/api/auth", {
@@ -142,7 +140,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
           space="$5"
           borderWidth={0}
           padding="$8"
-          onSubmit={() => (__DEV__ ? navigation.navigate("Home") : handleAuth())}
+          onSubmit={handleAuth}
         >
           {/* Sign up form fields */}
           <Input
@@ -155,6 +153,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             value={fName}
             aria-label="first-name"
             textContentType="givenName"
+            inputMode="text"
             importantForAutofill="auto"
             display={isLogin ? "none" : undefined}
             onChangeText={setFName}
@@ -169,6 +168,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             value={lName}
             aria-label="last-name"
             textContentType="familyName"
+            inputMode="text"
             importantForAutofill="auto"
             display={isLogin ? "none" : undefined}
             onChangeText={setLName}
@@ -182,6 +182,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             paddingHorizontal="$4"
             value={username}
             aria-label="username"
+            inputMode="text"
             importantForAutofill="auto"
             display={isLogin ? "none" : undefined}
             onChangeText={(e) => {
@@ -200,6 +201,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             value={email}
             aria-label="email"
             textContentType="emailAddress"
+            inputMode="email"
             importantForAutofill="auto"
             onChangeText={(e) => {
               setValidEmail(true)
@@ -216,6 +218,8 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             value={password}
             aria-label="password"
             textContentType="password"
+            secureTextEntry
+            inputMode="text"
             importantForAutofill="auto"
             onChangeText={(e) => {
               setValidPassword(true)
@@ -229,9 +233,11 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             placeholder="Password confirmation"
             backgroundColor="$accentBg"
             paddingHorizontal="$4"
-            value={passwordConfirm}
+            value={password}
             aria-label="password"
             textContentType="password"
+            secureTextEntry
+            inputMode="text"
             importantForAutofill="auto"
             display={isLogin ? "none" : undefined}
             onChangeText={(e) => {

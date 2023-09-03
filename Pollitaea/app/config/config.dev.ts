@@ -6,5 +6,6 @@
  * https://reactnative.dev/docs/security#storing-sensitive-info
  */
 export default {
-  API_URL: "https://api.rss2json.com/v1/",
+  // replace with http://localhost:5173 if web is running locally with yarn dev open
+  API_URL: "https://teampol.netlify.app",
 }
