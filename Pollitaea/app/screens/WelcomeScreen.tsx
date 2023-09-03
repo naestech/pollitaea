@@ -1,14 +1,15 @@
-import { Screen, Text } from "app/components"
-import { AppStackScreenProps, navigate } from "app/navigators"
 import { useToastController } from "@tamagui/toast"
+import { Screen, Text } from "app/components"
+import { useStores } from "app/models"
+import { AppStackScreenProps } from "app/navigators"
+import { api } from "app/services/api"
+import { APIError, SignUpResponse } from "app/types/auth"
+import { createToast, fetchSecret } from "app/utils/common"
+import { supabase } from "app/utils/supabaseClient"
 import { observer } from "mobx-react-lite"
 import React, { FC, useState } from "react"
 import { Anchor, Button, Form, Image, Input, Separator, Spinner, View, XStack } from "tamagui"
 import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
-import { api } from "app/services/api"
-import { SignUpResponse, APIError } from "app/types/auth"
-import { supabase } from "app/utils/supabaseClient"
-import { createToast, fetchSecret } from "app/utils/common"
 
 const welcomeLogo = require("../../assets/images/logo.png")
 
@@ -19,12 +20,12 @@ export const emailVal = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const numberPattern = /^[0-9]+$/
 const usernamePattern = /^[a-zA-Z0-9!@#$%^&*()-_=+[\]{}|;:'",.<>/?`~]+$/ // /^[a-zA-Z0-9_]+$/
 
-export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeScreen() {
-  const toast = useToastController()
+export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeScreen({
+  navigation,
+}) {
   const $containerInsets = useSafeAreaInsetsStyle(["top", "left", "right"])
-  const [status, setStatus] = useState<"off" | "submitting" | "submitted" | "success" | "errored">(
-    "off",
-  )
+  const [status, setStatus] = useState<"off" | "submitting">("off")
+
   const [email, setEmail] = useState("")
   const [validEmail, setValidEmail] = useState(true)
   const [password, setPassword] = useState("")
@@ -37,11 +38,13 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
   const [lName, setLName] = useState("")
   const [username, setUsername] = useState("")
   const [validUsername, setValidUsername] = useState(true)
-  const [gender, setGender] = useState<
-    "male" | "female" | "nonbinary" | "other" | "Prefer not to say"
-  >("other")
+  // const [gender, setGender] = useState<
+    // "male" | "female" | "nonbinary" | "other" | "Prefer not to say"
+  // >("other")
 
   const [isLogin, setIsLogin] = useState(true)
+  const store = useStores()
+  const toast = useToastController()
 
   const handleAuth = async () => {
     setStatus("submitting")
@@ -70,22 +73,25 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             password,
             phone,
             username,
+            fName,
+            lName,
           })
           .then(() => {
             // Progress to next page
             supabase.auth
               .resend({ email, type: "signup" })
-              .then(() => createToast(toast, "Welcome to TwoTone, confirm your email though."))
+              .then(() => createToast(toast, "Welcome to Pollitteia, confirm your email though."))
               .catch(() =>
                 createToast(toast, "Issue sending your confirmation email, please contact support"),
               )
-              .finally(() => navigate({ key: "Welcome", name: "Welcome" }))
+              .finally(() => navigation.replace("Welcome"))
           })
           .catch((err) => {
             createToast(toast, err.message)
             setStatus("off")
             setEmail("")
             setPassword("")
+            setPasswordConfirm("")
             setPhone("")
             setUsername("")
           })
@@ -104,15 +110,15 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
               createToast(toast, res.error.message)
             } else {
               createToast(toast, "Welcome")
-              // store.user.login(res.data.user)
-              // navigate({ key: "Home", name: "Home" })
+              store.user.login(res.data.user)
+              navigation.navigate("Home")
             }
             // set store
             // route to home screen
           })
-          .catch(() => {
-            createToast(toast, "Error connecting to server, maybe try again later")
-            supabase.auth.signOut().finally()
+          .catch((err) => {
+            console.log(err.message)
+            createToast(toast, err.message)
             setStatus("off")
           })
       }
@@ -136,9 +142,9 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
           space="$5"
           borderWidth={0}
           padding="$8"
-          onSubmit={handleAuth}
+          onSubmit={() => (__DEV__ ? navigation.navigate("Home") : handleAuth())}
         >
-          {/*Sign up form fields*/}
+          {/* Sign up form fields */}
           <Input
             borderRadius={5}
             width="90%"
@@ -171,7 +177,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
             borderRadius={5}
             width="90%"
             color="$accent"
-            placeholder={validUsername ? "Username" : "Longer username"}
+            placeholder={validUsername ? "Username" : "Enter a valid email"}
             backgroundColor="$accentBg"
             paddingHorizontal="$4"
             value={username}
@@ -183,8 +189,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
               setUsername(e)
             }}
           />
-
-          {/*Login form fields*/}
+          {/* Login form fields */}
           <Input
             borderRadius={5}
             width="90%"
@@ -234,10 +239,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
               setPasswordConfirm(e)
             }}
           />
-          <Form.Trigger
-            asChild="except-style"
-            disabled={status === "submitting" || status === "success"}
-          >
+          <Form.Trigger asChild="except-style" disabled={status === "submitting"}>
             <Button size="$5" icon={status === "submitting" ? () => <Spinner /> : undefined}>
               {isLogin ? "Log In" : "Sign Up"}
             </Button>

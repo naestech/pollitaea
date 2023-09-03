@@ -30,6 +30,7 @@ import { ErrorBoundary } from "./screens/ErrorScreen/ErrorBoundary"
 import { customFontsToLoad } from "./theme"
 import "./utils/ignoreWarnings"
 import * as storage from "./utils/storage"
+import { ToastProvider } from "@tamagui/toast"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
@@ -97,17 +98,19 @@ function App(props: AppProps) {
   // otherwise, we're ready to render the app
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <TamaguiProvider config={TamaguiConfig}>
-        <ErrorBoundary catchErrors={Config.catchErrors}>
-          <Suspense>
-            <AppNavigator
-              linking={linking}
-              initialState={initialNavigationState}
-              onStateChange={onNavigationStateChange}
-            />
-          </Suspense>
-        </ErrorBoundary>
-      </TamaguiProvider>
+      <ErrorBoundary catchErrors={Config.catchErrors}>
+        <TamaguiProvider config={TamaguiConfig}>
+          <ToastProvider>
+            <Suspense>
+              <AppNavigator
+                linking={linking}
+                initialState={initialNavigationState}
+                onStateChange={onNavigationStateChange}
+              />
+            </Suspense>
+          </ToastProvider>
+        </TamaguiProvider>
+      </ErrorBoundary>
     </SafeAreaProvider>
   )
 }
