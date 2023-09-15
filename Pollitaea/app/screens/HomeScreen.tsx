@@ -5,9 +5,6 @@ import { observer } from "mobx-react-lite"
 import React, { FC } from "react"
 import { YStack } from "tamagui"
 
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
-
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
 export const HomeScreen: FC<HomeScreenProps> = observer(({ route, navigation }) => {
