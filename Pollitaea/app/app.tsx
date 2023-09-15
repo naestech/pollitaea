@@ -35,23 +35,22 @@ import { ToastProvider } from "@tamagui/toast"
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
 // Web linking configuration
-const prefix = Linking.createURL("/")
+const prefix = Linking.createURL("pollitaea://")
 const config = {
   screens: {
-    Login: {
-      path: "",
-    },
-    Welcome: "welcome",
-    Demo: {
-      screens: {
-        DemoShowroom: {
-          path: "showroom/:queryIndex?/:itemIndex?",
-        },
-        DemoDebug: "debug",
-        DemoPodcastList: "podcast",
-        DemoCommunity: "community",
-      },
-    },
+    Welcome: "",
+    Home: "Home",
+    Profile: "Profile",
+    // Demo: {
+    //   screens: {
+    //     DemoShowroom: {
+    //       path: "showroom/:queryIndex?/:itemIndex?",
+    //     },
+    //     DemoDebug: "debug",
+    //     DemoPodcastList: "podcast",
+    //     DemoCommunity: "community",
+    //   },
+    // },
   },
 }
 

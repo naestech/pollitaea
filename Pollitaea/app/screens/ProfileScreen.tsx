@@ -1,25 +1,22 @@
-import { Nav, Text } from "app/components"
 import { AppStackScreenProps } from "app/navigators"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { observer } from "mobx-react-lite"
 import React, { FC } from "react"
-import { YStack } from "tamagui"
-
-// import { useNavigation } from "@react-navigation/native"
+import { Text, View, YStack } from "tamagui"
 // import { useStores } from "app/models"
 
-interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
+interface ProfileScreenProps extends AppStackScreenProps<"Profile"> {}
 
-export const HomeScreen: FC<HomeScreenProps> = observer(({ route, navigation }) => {
+export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigation }) => {
   // Pull in one of our MST stores
   // const { someStore, anotherStore } = useStores()
   const containerStyle = useSafeAreaInsetsStyle(["top", "left", "right"])
 
   return (
-    <Nav navigation={navigation} route={route}>
-      <YStack style={containerStyle}>
-        <Text text="Home" />
+    <View style={containerStyle} height="100%">
+      <YStack>
+        <Text textAlign="center">Profile</Text>
       </YStack>
-    </Nav>
+    </View>
   )
 })

@@ -6,6 +6,7 @@
  */
 import { DarkTheme, DefaultTheme, NavigationContainer } from "@react-navigation/native"
 import { NativeStackScreenProps, createNativeStackNavigator } from "@react-navigation/native-stack"
+import { useStores } from "app/models"
 import * as Screens from "app/screens"
 import { colors } from "app/theme"
 import { observer } from "mobx-react-lite"
@@ -31,7 +32,8 @@ export type AppStackParamList = {
   Welcome: undefined
   // 🔥 Your screens go here
   Home: undefined
-	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+  Profile: undefined
+  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
 /**
@@ -49,12 +51,17 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
+  const store = useStores()
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false, navigationBarColor: colors.background }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
+      initialRouteName={store.user.authenticated ? "Home" : "Welcome"}
+    >
       <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
       {/** 🔥 Your screens go here */}
       <Stack.Screen name="Home" component={Screens.HomeScreen} />
-			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
+      <Stack.Screen name="Profile" component={Screens.ProfileScreen} />
+      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
 })

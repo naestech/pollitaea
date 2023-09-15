@@ -28,6 +28,18 @@ export interface NavProps {
 }
 
 /**
+ * state: Readonly<{
+    key: string;
+    index: number;
+    routeNames: string[];
+    history?: unknown[];
+    routes: NavigationRoute<ParamListBase, string>[];
+    type: string;
+    stale: false;
+}>
+ */
+
+/**
  * @description Navbar for navigating across the app
  * @param
  */
@@ -56,36 +68,34 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
           <Tabs.Tab
             flex={1}
             value="Home"
-            onPress={() => {
-              route.name !== "Home" ? navigation.replace("Home") : undefined
-            }}
+            onPress={() => (route.name !== "Home" ? navigation.replace("Home") : undefined)}
           >
             <Home />
           </Tabs.Tab>
           <Tabs.Tab
             flex={1}
             value="Ballot"
-            onPress={() => {
-              route.name !== "Ballot" ? navigation.replace("Ballot") : undefined
-            }}
+            // onPress={() =>
+            //   route.name !== "Ballot" ? navigation.replace("Ballot") : undefined
+            // }
           >
             <Vote />
           </Tabs.Tab>
           <Tabs.Tab
             flex={1}
             value="News"
-            onPress={() => {
-              route.name !== "News" ? navigation.replace("News") : undefined
-            }}
+            // onPress={() =>
+            //   route.name !== "News" ? navigation.replace("News") : undefined
+            // }
           >
             <Newspaper />
           </Tabs.Tab>
           <Tabs.Tab
             flex={1}
             value="Profile"
-            onPress={() => {
-              route.name !== "Profile" ? navigation.replace("Profile") : undefined
-            }}
+            // onPress={() =>
+            //   route.name !== "Profile" ? navigation.replace("Profile") : undefined
+            // }
           >
             <User2 />
           </Tabs.Tab>
