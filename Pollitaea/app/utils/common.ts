@@ -1,4 +1,4 @@
-import { ApiSecret } from "app/types/auth"
+import { ApiSecret } from "app/services/api"
 import { api } from "../services/api/api"
 
 /**
