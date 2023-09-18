@@ -1,11 +1,12 @@
 import { RouteProp } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-import { Home, Newspaper, User2, Vote } from "@tamagui/lucide-icons"
+import { Home, LogOut, Newspaper, User2, Vote } from "@tamagui/lucide-icons"
+import { useStores } from "app/models"
 import { AppStackParamList } from "app/navigators"
 import { observer } from "mobx-react-lite"
 import * as React from "react"
 import { Platform, StyleProp, ViewStyle } from "react-native"
-import { Separator, Tabs } from "tamagui"
+import { Button, Separator, Tabs, XStack } from "tamagui"
 
 /**
  * @description Passes page info to navbar, keeps propper button highlighted, etc,
@@ -46,9 +47,20 @@ export interface NavProps {
  */
 export const Nav = observer(function Nav({ children, navigation, route }: NavProps) {
   const isIos = Platform.OS === "ios"
+  const store = useStores()
 
   return (
     <>
+      <XStack
+        display="flex"
+        backgroundColor="whitesmoke"
+        alignContent="space-around"
+        flexDirection="row-reverse"
+        elevationAndroid={2}
+        height="10%"
+      >
+        <Button marginHorizontal="$5" marginTop="$6" icon={LogOut} onPressOut={store.user.logout} />
+      </XStack>
       {children || undefined}
       <Tabs
         defaultValue="Home"

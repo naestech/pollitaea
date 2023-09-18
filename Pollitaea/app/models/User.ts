@@ -14,6 +14,7 @@ export const UserModel = types
     username: types.maybe(types.string),
     email: types.maybe(types.string),
     createdAt: types.maybe(types.string),
+    profilePic: types.maybe(types.string),
   })
   .actions(withSetPropAction)
   .views((self) => ({})) // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -24,6 +25,7 @@ export const UserModel = types
       self.username = username
       self.email = "user@pollitaea.app"
       self.createdAt = Date.now().toLocaleString()
+      self.profilePic = "https://placehold.co/150.png"
     },
     login(supaUser: SupaUser) {
       self.authenticated = true
@@ -51,6 +53,10 @@ export const UserModel = types
       self.username = undefined
       self.email = undefined
       self.createdAt = undefined
+      self.profilePic = undefined
+    },
+    setProfilePic(url: string) {
+      self.profilePic = url
     },
   })) // eslint-disable-line @typescript-eslint/no-unused-vars
 
@@ -64,4 +70,5 @@ export const createUserDefaultModel = () =>
     username: undefined,
     email: undefined,
     createdAt: undefined,
+    profilePic: undefined,
   })
