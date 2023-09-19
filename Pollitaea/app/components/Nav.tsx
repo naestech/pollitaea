@@ -8,6 +8,10 @@ import * as React from "react"
 import { Platform, StyleProp, ViewStyle } from "react-native"
 import { Button, Separator, Tabs, XStack } from "tamagui"
 
+export type NavList =
+  | NativeStackNavigationProp<AppStackParamList, "Welcome", undefined>
+  | NativeStackNavigationProp<AppStackParamList, "Home", undefined>
+  | NativeStackNavigationProp<AppStackParamList, "Profile", undefined>
 /**
  * @description Passes page info to navbar, keeps propper button highlighted, etc,
  * Errors out if page doesn't exist yet
@@ -21,10 +25,7 @@ export interface NavProps {
    * Navigation object, useful for intelisense and providing the propper propertiies to each page
    * @todo Add page property object for when pages need it
    */
-  navigation:
-    | NativeStackNavigationProp<AppStackParamList, "Welcome", undefined>
-    | NativeStackNavigationProp<AppStackParamList, "Home", undefined>
-    | NativeStackNavigationProp<AppStackParamList, "Profile", undefined>
+  navigation: NavList
   route: RouteProp<AppStackParamList, "Home" | "Welcome" | "Profile">
   children?: React.ReactNode
 }
@@ -59,7 +60,12 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
         elevationAndroid={2}
         height="10%"
       >
-        <Button marginHorizontal="$5" marginTop="$6" icon={LogOut} onPressOut={store.user.logout} />
+        <Button
+          marginHorizontal="$5"
+          marginTop="$6"
+          icon={LogOut}
+          onPressOut={() => store.user.logout(navigation)}
+        />
       </XStack>
       {children || undefined}
       <Tabs
