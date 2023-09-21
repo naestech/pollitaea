@@ -16,7 +16,7 @@ interface ProfileScreenProps extends AppStackScreenProps<"Profile"> {}
 export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigation }) => {
   // Pull in one of our MST stores
   const store = useStores()
-  const [profile, setProfile] = useState<Profile>()
+  const [profile, setProfile] = useState<Profile | undefined>()
   const toast = useToastController()
   const containerStyle = useSafeAreaInsetsStyle(["top", "left", "right"])
 
@@ -89,7 +89,6 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
         </YStack>
         <Button
           width="25%"
-          size="$3"
           backgroundColor="$juicyGreen"
           alignSelf="center"
           borderRadius="$8"

@@ -1,10 +1,14 @@
 import { RouteProp } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-import { Home, LogOut, Newspaper, User2, Vote } from "@tamagui/lucide-icons"
+import { Home, LogOut, Newspaper, Search, User2, Vote, X } from "@tamagui/lucide-icons"
+import { useToastController } from "@tamagui/toast"
 import { useStores } from "app/models"
 import { AppStackParamList } from "app/navigators"
+import { createToast } from "app/utils/common"
+import { supabase } from "app/utils/supabaseClient"
 import { observer } from "mobx-react-lite"
 import * as React from "react"
+import { useEffect } from "react"
 import { Platform, StyleProp, ViewStyle } from "react-native"
 import { Button, Separator, Tabs, XStack } from "tamagui"
 
@@ -12,6 +16,7 @@ export type NavList =
   | NativeStackNavigationProp<AppStackParamList, "Welcome", undefined>
   | NativeStackNavigationProp<AppStackParamList, "Home", undefined>
   | NativeStackNavigationProp<AppStackParamList, "Profile", undefined>
+  | NativeStackNavigationProp<AppStackParamList, "Search", undefined>
 /**
  * @description Passes page info to navbar, keeps propper button highlighted, etc,
  * Errors out if page doesn't exist yet
@@ -26,29 +31,30 @@ export interface NavProps {
    * @todo Add page property object for when pages need it
    */
   navigation: NavList
-  route: RouteProp<AppStackParamList, "Home" | "Welcome" | "Profile">
+  route: RouteProp<AppStackParamList, "Home" | "Welcome" | "Profile" | "Search">
   children?: React.ReactNode
 }
-
-/**
- * state: Readonly<{
-    key: string;
-    index: number;
-    routeNames: string[];
-    history?: unknown[];
-    routes: NavigationRoute<ParamListBase, string>[];
-    type: string;
-    stale: false;
-}>
- */
 
 /**
  * @description Navbar for navigating across the app
  * @param
  */
 export const Nav = observer(function Nav({ children, navigation, route }: NavProps) {
+  const toast = useToastController()
   const isIos = Platform.OS === "ios"
   const store = useStores()
+
+  useEffect(() => {
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (!data?.user) {
+          createToast(toast, "Your session has expired")
+          navigation.navigate("Welcome")
+        }
+      })
+      .catch()
+  }, [])
 
   return (
     <>
@@ -56,13 +62,32 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
         display="flex"
         backgroundColor="whitesmoke"
         alignContent="space-around"
+        justifyContent="space-between"
         flexDirection="row-reverse"
         elevationAndroid={2}
         height="10%"
       >
+        {route.name === "Search" ? (
+          <Button
+            marginHorizontal="$5"
+            marginVertical="$6"
+            size="$4"
+            icon={X}
+            onPressOut={() => navigation.pop()}
+          />
+        ) : (
+          <Button
+            marginHorizontal="$5"
+            marginVertical="$6"
+            size="$4"
+            icon={Search}
+            onPressOut={() => navigation.push("Search")}
+          />
+        )}
         <Button
           marginHorizontal="$5"
-          marginTop="$6"
+          marginVertical="$6"
+          size="$4"
           icon={LogOut}
           onPressOut={() => store.user.logout(navigation)}
         />
