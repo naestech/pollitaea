@@ -41,6 +41,7 @@ const config = {
     Welcome: "",
     Home: "Home",
     Profile: "Profile",
+    Search: "Search",
     // Demo: {
     //   screens: {
     //     DemoShowroom: {
