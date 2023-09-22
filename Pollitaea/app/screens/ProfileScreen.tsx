@@ -21,7 +21,7 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
   const containerStyle = useSafeAreaInsetsStyle(["top", "left", "right"])
 
   useEffect(() => {
-    if (route.params?.userId) {
+    if (route.params?.userId && route.params?.userId !== store.user.id) {
       // User is passed via search
       supabase
         .from("profiles")
@@ -35,7 +35,7 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
             createToast(toast, error.message)
           }
         })
-    } else {
+    } else if (!store.user?.avatar_url) {
       // Has db user info, not just auth data
       supabase
         .from("profiles")
@@ -43,7 +43,7 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
         .eq("id", store.user.id)
         .single()
         .then(({ data, error }) => {
-          console.error(error)
+          if (error) console.error(error)
           if (data) {
             setProfile(data)
             supabase.auth.getUser().then(({ data: { user } }) => {
@@ -51,12 +51,13 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
             })
           }
         })
-    }
+    } // @ts-ignore
+    else setProfile(store.user)
   }, [])
 
   return (
     <Nav navigation={navigation} route={route}>
-      <YStack style={containerStyle} marginVertical="$1" space="$3">
+      <YStack style={containerStyle} marginVertical="$5" space="$3">
         <Image
           alignSelf="center"
           borderRadius="$5"
@@ -87,13 +88,13 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
           </Text>
         </YStack>
         <Button
-          width="25%"
-          backgroundColor="$juicyGreen"
+          disabled={profile?.id === store.user.id}
+          backgroundColor={profile?.id === store.user.id ? undefined : "$juicyGreen"}
           alignSelf="center"
           borderRadius="$8"
           onPress={() => createToast(toast, "Followed")}
         >
-          Follow
+          {profile?.id === store.user.id ? "Edit Profile" : "Follow"}
         </Button>
       </YStack>
     </Nav>

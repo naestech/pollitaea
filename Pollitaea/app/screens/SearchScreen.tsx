@@ -108,7 +108,7 @@ const QueryResult = (item: SupabaseResult) => {
         borderColor: "black",
       }}
       // @ts-ignore
-      onPressIn={() => navigation.navigate("Profile", { userId: item.id })}
+      onPressOut={() => navigation.navigate("Profile", { userId: item.id })}
     >
       <Avatar
         borderColor="aliceblue"
