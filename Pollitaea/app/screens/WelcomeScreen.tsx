@@ -1,19 +1,29 @@
 import { useToastController } from "@tamagui/toast"
-import { Screen, Text } from "app/components"
+import { Text } from "app/components"
 import { useStores } from "app/models"
 import { AppStackScreenProps } from "app/navigators"
-import { api } from "app/services/api"
-import { APIError, SignUpResponse } from "app/types/auth"
+import { APIError, SignUpResponse, api } from "app/services/api"
 import { createToast, fetchSecret } from "app/utils/common"
 import { supabase } from "app/utils/supabaseClient"
 import { observer } from "mobx-react-lite"
-import React, { FC, useState } from "react"
-import { Anchor, Button, Form, Image, Input, Separator, Spinner, View, XStack } from "tamagui"
+import React, { FC, useEffect, useState } from "react"
+import {
+  Anchor,
+  Button,
+  Form,
+  Image,
+  Input,
+  Separator,
+  Spinner,
+  View,
+  XStack,
+  YStack,
+} from "tamagui"
 import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 
 const welcomeLogo = require("../../assets/images/logo.png")
 
-type WelcomeScreenProps = AppStackScreenProps<"Welcome">
+export type WelcomeScreenProps = AppStackScreenProps<"Welcome">
 
 // Email validation regex
 export const emailVal = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -42,6 +52,13 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
   const [isLogin, setIsLogin] = useState(true)
   const store = useStores()
   const toast = useToastController()
+
+  useEffect(() => {
+    supabase.auth
+      .getUser()
+      .then(() => createToast(toast, "Welcome back"))
+      .catch()
+  }, [])
 
   const handleAuth = async () => {
     setStatus("submitting")
@@ -130,7 +147,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
   }
 
   return (
-    <Screen style={$containerInsets} preset="scroll">
+    <YStack style={$containerInsets}>
       <View marginTop="$5" paddingHorizontal="$5" justifyContent="space-between" space="$5">
         <Image source={welcomeLogo} paddingHorizontal="$4" alt="Transparent logo" />
         <Separator alignSelf="stretch" />
@@ -267,6 +284,6 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
           </Anchor>
         </XStack>
       </View>
-    </Screen>
+    </YStack>
   )
 })

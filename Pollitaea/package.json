@@ -40,7 +40,9 @@
     "@react-navigation/bottom-tabs": "^6.3.2",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.0.2",
+    "@shopify/flash-list": "^1.6.1",
     "@supabase/supabase-js": "^2.26.0",
+    "@tamagui/animations-moti": "^1.68.6",
     "@tamagui/babel-plugin": "^1.59.2",
     "@tamagui/config": "^1.59.2",
     "@tamagui/font-fira-mono": "^1.59.2",
@@ -129,6 +131,7 @@
     "react-test-renderer": "18.2.0",
     "reactotron-core-client": "^2.8.10",
     "regenerator-runtime": "^0.13.4",
+    "supabase": "^1.93.0",
     "ts-jest": "29",
     "typescript": "^5.1.3"
   },

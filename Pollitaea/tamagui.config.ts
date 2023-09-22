@@ -1,3 +1,4 @@
+import { createAnimations } from "@tamagui/animations-react-native"
 import { shorthands } from "@tamagui/shorthands"
 
 import { createGenericFont } from "@tamagui/config"
@@ -59,12 +60,57 @@ const tokens = createTokens({
   },
 })
 
+const animations = createAnimations({
+  fast: {
+    type: "spring",
+    damping: 20,
+    mass: 1.2,
+    stiffness: 250,
+  },
+  medium: {
+    type: "spring",
+    damping: 10,
+    mass: 0.9,
+    stiffness: 100,
+  },
+  slow: {
+    type: "timing",
+    damping: 20,
+    stiffness: 60,
+  },
+  "100ms": {
+    type: "timing",
+    duration: 100,
+  },
+  bouncy: {
+    damping: 9,
+    mass: 0.9,
+    stiffness: 150,
+  },
+  lazy: {
+    damping: 18,
+    stiffness: 50,
+  },
+  quick: {
+    damping: 20,
+    mass: 1.2,
+    stiffness: 250,
+  },
+  tooltip: {
+    damping: 10,
+    mass: 0.9,
+    stiffness: 100,
+  },
+})
+
 export default createTamagui({
   themes,
 
   tokens,
 
   shorthands,
+
+  animations,
 
   fonts: {
     body: bodyFont,
