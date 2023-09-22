@@ -52,7 +52,6 @@ export const UserModel = types
         supabase.auth
           .signOut()
           .then((res) => {
-            console.log(res)
             console.log("successful logout")
             navigation.navigate("Welcome")
           })

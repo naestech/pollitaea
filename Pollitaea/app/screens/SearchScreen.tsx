@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-color-literals */
 /* eslint-disable react-native/no-inline-styles */
+import { useNavigation } from "@react-navigation/native"
 import { FlashList } from "@shopify/flash-list"
 import { Search, Verified } from "@tamagui/lucide-icons"
 import { useToastController } from "@tamagui/toast"
@@ -27,35 +28,21 @@ export const SearchScreen: FC<SearchScreenProps> = observer(({ route, navigation
   const containerStyle = useSafeAreaInsetsStyle(["top", "left", "right"])
   const toast = useToastController()
 
-  const [count, setCount] = useState(0)
-  const [results, setResults] = useState<SupabaseResult[]>([
-    {
-      id: "",
-      avatar_url: "",
-      full_name: "",
-      username: "",
-      role: "STOCK",
-    },
-  ])
+  const [results, setResults] = useState<SupabaseResult[]>([])
 
   const handleSearch = (query: string): void => {
-    console.log(query)
     supabase
       .from("profiles")
       .select("id, avatar_url, full_name, username, role")
       .textSearch("user_description", query) // Added a computed column that holds username and full name together
       .limit(7)
-      .then(({ count, data, error, statusText }) => {
+      .then(({ data, error, statusText }) => {
         if (error) {
           createToast(toast, "There was an issue during the search")
           console.error(statusText)
           console.error(error.message)
         } else {
-          console.log(data)
           setResults(data)
-          setCount(count)
-          console.log("results")
-          console.log(results)
         }
       })
   }
@@ -81,9 +68,11 @@ export const SearchScreen: FC<SearchScreenProps> = observer(({ route, navigation
       <Separator marginVertical="$5" />
       <FlashList
         ListHeaderComponent={
-          <H4 color="gray" marginVertical="$1" marginHorizontal="$-3">
-            People:
-          </H4>
+          results.length ? (
+            <H4 color="gray" marginVertical="$1" marginHorizontal="$-3" animation="100ms">
+              People:
+            </H4>
+          ) : undefined
         }
         contentContainerStyle={{ paddingHorizontal: 25 }}
         estimatedItemSize={76}
@@ -104,7 +93,7 @@ export const SearchScreen: FC<SearchScreenProps> = observer(({ route, navigation
 })
 
 const QueryResult = (item: SupabaseResult) => {
-  const [pressed, setPressed] = useState(false)
+  const navigation = useNavigation()
   return (
     <XStack
       key={item.id}
@@ -118,10 +107,8 @@ const QueryResult = (item: SupabaseResult) => {
         borderWidth: 1.2,
         borderColor: "black",
       }}
-      onPressIn={() => {
-        setPressed(!pressed)
-        console.log(`State Change - pressed(${pressed})`)
-      }}
+      // @ts-ignore
+      onPressIn={() => navigation.navigate("Profile", { userId: item.id })}
     >
       <Avatar
         borderColor="aliceblue"
@@ -138,7 +125,7 @@ const QueryResult = (item: SupabaseResult) => {
           <Text color="black">{item.full_name}</Text>
           <XStack space="$2">
             <Text color="gray" opacity={0.8}>
-              @{item.username}
+              {"@" + item.username}
             </Text>
             <Verified size="$1" color="blue" />
           </XStack>
@@ -149,7 +136,7 @@ const QueryResult = (item: SupabaseResult) => {
             <Text color="black">{item.full_name}</Text>
             <XStack space="$2">
               <Text color="gray" opacity={0.8}>
-                @{item.username}
+                {"@" + item.username}
               </Text>
             </XStack>
           </YStack>

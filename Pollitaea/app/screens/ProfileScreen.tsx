@@ -29,7 +29,6 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
         .eq("id", route.params.userId)
         .single()
         .then(({ data, error }) => {
-          console.log(data, error)
           if (data) {
             setProfile(data)
           } else {
@@ -44,7 +43,7 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
         .eq("id", store.user.id)
         .single()
         .then(({ data, error }) => {
-          console.log(data, error)
+          console.error(error)
           if (data) {
             setProfile(data)
             supabase.auth.getUser().then(({ data: { user } }) => {
