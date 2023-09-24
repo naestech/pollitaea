@@ -1,11 +1,13 @@
 /* eslint-disable react-native/no-color-literals */
 /* eslint-disable react-native/no-inline-styles */
+import { useToastController } from "@tamagui/toast"
 import { Nav, Text } from "app/components"
 import { useStores } from "app/models"
 import { AppStackScreenProps } from "app/navigators"
+import { createToast } from "app/utils/common"
 import { observer } from "mobx-react-lite"
 import React, { FC } from "react"
-import { Avatar, Separator, Switch, XStack, YStack } from "tamagui"
+import { Avatar, Button, Separator, Switch, XStack, YStack } from "tamagui"
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
 
@@ -16,7 +18,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
   const store = useStores()
 
   // Pull in navigation via hook
-  // const navigation = useNavigation()
+  const toast = useToastController()
   return (
     <Nav navigation={navigation} route={route}>
       <YStack
@@ -28,26 +30,59 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
         <Text style={{ textAlignVertical: "center" }} size="lg">
           Profile:
         </Text>
-        <XStack justifyContent="space-between">
+        <XStack
+          justifyContent="space-between"
+          onPress={() => createToast(toast, "Change profile pic :)")}
+          animation="quick"
+          pressStyle={{
+            opacity: 0.3,
+            // borderColor: "black",
+            elevation: "$2",
+          }}
+        >
           <Text style={{ textAlignVertical: "center" }} size="sm">
             Change Profile Picture
           </Text>
-          {store.user.avatar_url ? (
-            <Avatar borderColor="aliceblue" size="$3" borderRadius="$5" marginHorizontal="$3">
+          {store.user?.avatar_url ? (
+            <Avatar borderColor="aliceblue" size="$4" borderRadius="$5" marginHorizontal="$3">
               <Avatar.Image src={store.user.avatar_url} />
               <Avatar.Fallback borderColor="aqua" />
             </Avatar>
           ) : undefined}
         </XStack>
-        <Text style={{ textAlignVertical: "center" }} size="sm">
-          Change Username & Email
-        </Text>
-        <Text style={{ textAlignVertical: "center" }} size="sm">
-          Change Bio & Website
-        </Text>
-        <Text style={{ textAlignVertical: "center" }} size="lg">
-          Settings:
-        </Text>
+        <XStack
+          justifyContent="space-between"
+          onPress={() => createToast(toast, "Change creds")}
+          animation="quick"
+          pressStyle={{
+            opacity: 0.3,
+            // borderColor: "black",
+            elevation: "$2",
+          }}
+        >
+          <Text style={{ textAlignVertical: "center" }} size="sm">
+            Change Username & Email
+          </Text>
+        </XStack>
+        <XStack
+          justifyContent="space-between"
+          onPress={() => createToast(toast, "Change profile info")}
+          animation="quick"
+          pressStyle={{
+            opacity: 0.3,
+            // borderColor: "black",
+            elevation: "$2",
+          }}
+        >
+          <Text style={{ textAlignVertical: "center" }} size="sm">
+            Change Bio & Website
+          </Text>
+        </XStack>
+        <XStack>
+          <Text style={{ textAlignVertical: "center" }} size="lg">
+            Settings:
+          </Text>
+        </XStack>
         <XStack justifyContent="space-between">
           <Text
             style={{ textAlignVertical: "center", textDecorationLine: "line-through" }}
@@ -57,15 +92,47 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
           </Text>
           <Switch alignSelf="center" size="$3" disabled checked={false} />
         </XStack>
-        <Text style={{ textAlignVertical: "center" }} size="sm">
-          Apply for a Professional Account
-        </Text>
-        <Text size="sm" onPressOut={() => store.user.logout(navigation)}>
-          Logout
-        </Text>
-        <Text size="sm" style={{ color: "maroon" }}>
-          Deactivate Account
-        </Text>
+        <XStack
+          justifyContent="space-between"
+          onPress={() => createToast(toast, "Apply for pro-account")}
+          animation="quick"
+          pressStyle={{
+            opacity: 0.3,
+            // borderColor: "black",
+            elevation: "$2",
+          }}
+        >
+          <Text style={{ textAlignVertical: "center" }} size="sm">
+            Apply for a Professional Account
+          </Text>
+        </XStack>
+        <XStack
+          justifyContent="space-between"
+          onPress={() => createToast(toast, "Attempt Logout")}
+          onPressOut={() => store.user.logout(navigation)}
+          animation="quick"
+          pressStyle={{
+            opacity: 0.3,
+            // borderColor: "black",
+            elevation: "$2",
+          }}
+        >
+          <Text size="sm">Logout</Text>
+        </XStack>
+        <XStack
+          justifyContent="space-between"
+          onPress={() => createToast(toast, "Deactivate Account")}
+          animation="quick"
+          pressStyle={{
+            opacity: 0.3,
+            // borderColor: "black",
+            elevation: "$2",
+          }}
+        >
+          <Text size="sm" style={{ color: "maroon" }}>
+            Deactivate Account
+          </Text>
+        </XStack>
       </YStack>
     </Nav>
   )
