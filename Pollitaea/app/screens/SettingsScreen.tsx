@@ -5,20 +5,104 @@ import { Nav, Text } from "app/components"
 import { useStores } from "app/models"
 import { AppStackScreenProps } from "app/navigators"
 import { createToast } from "app/utils/common"
+import { supabase } from "app/utils/supabaseClient"
+import * as ImagePicker from "expo-image-picker"
 import { observer } from "mobx-react-lite"
-import React, { FC } from "react"
-import { Avatar, Button, Separator, Switch, XStack, YStack } from "tamagui"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
+import React, { FC, useEffect } from "react"
+import { Avatar, Separator, Switch, XStack, YStack } from "tamagui"
 
 interface SettingsScreenProps extends AppStackScreenProps<"Settings"> {}
 
 export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, route }) => {
   // Pull in one of our MST stores
   const store = useStores()
-
-  // Pull in navigation via hook
   const toast = useToastController()
+  const hasAvatar = store.user?.avatar_url != null
+
+  useEffect(() => {
+    if (!hasAvatar) {
+      // Refresh avatar if this is fresh off signup/login
+      supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", store.user.id)
+        .single()
+        .then(({ data, error }) => {
+          if (error) console.error(error)
+          if (data) {
+            supabase.auth.getUser().then(({ data: { user } }) => {
+              store.user.hydrateProfile(data, user)
+            })
+          }
+        })
+    }
+  }, [])
+
+  const handleFileSelect = async () => {
+    createToast(toast, "Change profile pic :)")
+    await ImagePicker.getMediaLibraryPermissionsAsync()
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 5,
+    })
+      .then((img) => {
+        console.log("Successfully picked image")
+
+        if (!img.canceled) {
+          if (
+            !(
+              // img.assets[0].uri.toLowerCase().includes(".png") ||
+              (
+                img.assets[0].uri.toLowerCase().includes(".jpeg") ||
+                img.assets[0].uri.toLowerCase().includes(".jpg")
+              )
+            )
+          ) {
+            createToast(toast, "Only jpg and png files allowed")
+            return
+          }
+          if (hasAvatar) {
+            supabase.storage
+              .from("avatars")
+              .update(store.user.id, img.assets[0].base64, { upsert: true })
+              .then(({ data: { path }, error: { message } }) => {
+                if (message) {
+                  createToast(toast, "Error - " + message)
+                } else {
+                  createToast(toast, "Successful save, now update db")
+                  supabase
+                    .from("profiles")
+                    .update({
+                      avatar_url: supabase.storage.from("avatars").getPublicUrl(path).data
+                        .publicUrl,
+                    })
+                    .eq("id", store.user.id)
+                }
+              })
+              .catch((err) => {
+                createToast(toast, err.message)
+                console.log("storage error")
+                console.log(err)
+              })
+          } else {
+            const imageUri = img.assets[0].uri.split(".")
+            supabase.storage.from("avatars").upload(
+              "/" + store.user.id + "/avatar/" + imageUri[0],
+              // imageUri[imageUri.length - 1],
+              img.assets[0].base64,
+              { upsert: true },
+            )
+          }
+        }
+      })
+      .catch((err) => {
+        console.log("Error picking image")
+        console.log(err)
+      })
+  }
+
   return (
     <Nav navigation={navigation} route={route}>
       <YStack
@@ -32,7 +116,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
         </Text>
         <XStack
           justifyContent="space-between"
-          onPress={() => createToast(toast, "Change profile pic :)")}
+          onPress={handleFileSelect}
           animation="quick"
           pressStyle={{
             opacity: 0.3,

@@ -76,7 +76,8 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
         justifyContent="space-between"
         flexDirection="row"
         elevationAndroid={2}
-        height="10%"
+        height="11%"
+        paddingTop="$3"
       >
         {route.name === "Settings" ? (
           backButton
