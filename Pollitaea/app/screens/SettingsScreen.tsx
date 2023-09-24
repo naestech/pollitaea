@@ -66,7 +66,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
           if (hasAvatar) {
             supabase.storage
               .from("avatars")
-              .update(store.user.id, img.assets[0].base64, { upsert: true })
+              .update(store.user.id+ "/avatar", img.assets[0].base64, { upsert: true })
               .then(({ data: { path }, error: { message } }) => {
                 if (message) {
                   createToast(toast, "Error - " + message)
