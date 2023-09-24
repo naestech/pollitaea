@@ -1,6 +1,6 @@
 import { RouteProp } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-import { Home, Newspaper, Search, Settings, User2, Vote, X } from "@tamagui/lucide-icons"
+import { ChevronLeft, Home, Newspaper, Search, Settings, User2, Vote } from "@tamagui/lucide-icons"
 import { useToastController } from "@tamagui/toast"
 import { AppStackParamList } from "app/navigators"
 import { createToast } from "app/utils/common"
@@ -55,6 +55,18 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
       .catch()
   }, [])
 
+  const backButton = (
+    <Button
+      marginHorizontal="$5"
+      marginVertical="$6"
+      icon={<ChevronLeft size="$1" />}
+      color="black"
+      variant="outlined"
+      borderColor="black"
+      onPressOut={() => navigation.pop()}
+    />
+  )
+
   return (
     <>
       <XStack
@@ -62,20 +74,26 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
         backgroundColor="whitesmoke"
         alignContent="space-around"
         justifyContent="space-between"
-        flexDirection="row-reverse"
+        flexDirection="row"
         elevationAndroid={2}
         height="10%"
       >
-        {route.name === "Search" ? (
+        {route.name === "Settings" ? (
+          backButton
+        ) : (
           <Button
             marginHorizontal="$5"
             marginVertical="$6"
-            icon={<X size="$1" />}
+            size="$4"
+            icon={<Settings size="$1" />}
             color="black"
             variant="outlined"
             borderColor="black"
-            onPressOut={() => navigation.pop()}
+            onPressOut={() => navigation.push("Settings")}
           />
+        )}
+        {route.name === "Settings" ? undefined : route.name === "Search" ? (
+          backButton
         ) : (
           <Button
             marginHorizontal="$5"
@@ -88,16 +106,6 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
             onPressOut={() => navigation.push("Search")}
           />
         )}
-        <Button
-          marginHorizontal="$5"
-          marginVertical="$6"
-          size="$4"
-          icon={<Settings size="$1" />}
-          color="black"
-          variant="outlined"
-          borderColor="black"
-          onPressOut={() => navigation.push("Settings")}
-        />
       </XStack>
       {children || undefined}
       {route.name === "Settings" ? undefined : (
