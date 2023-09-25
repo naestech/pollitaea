@@ -6,7 +6,7 @@ import { useStores } from "app/models"
 import { AppStackScreenProps } from "app/navigators"
 import { createToast } from "app/utils/common"
 import { supabase } from "app/utils/supabaseClient"
-import * as ImagePicker from "expo-image-picker"
+import { launchCamera, launchImageLibrary } from "react-native-image-picker"
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect } from "react"
 import { Avatar, Separator, Switch, XStack, YStack } from "tamagui"
@@ -41,16 +41,11 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
   const handleFileSelect = async () => {
     createToast(toast, "Change profile pic :)")
     await ImagePicker.getMediaLibraryPermissionsAsync()
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 5,
-    })
+    launchImageLibrary({ mediaType: "photo", quality: 0.4, assetRepresentationMode: "auto" })
       .then((img) => {
         console.log("Successfully picked image")
 
-        if (!img.canceled) {
+        if (!img.didCancel) {
           if (
             !(
               // img.assets[0].uri.toLowerCase().includes(".png") ||
@@ -66,7 +61,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
           if (hasAvatar) {
             supabase.storage
               .from("avatars")
-              .update(store.user.id+ "/avatar", img.assets[0].base64, { upsert: true })
+              .update(store.user.id + "/avatar", img.assets[0].uri, { upsert: true })
               .then(({ data: { path }, error: { message } }) => {
                 if (message) {
                   createToast(toast, "Error - " + message)
@@ -89,9 +84,9 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
           } else {
             const imageUri = img.assets[0].uri.split(".")
             supabase.storage.from("avatars").upload(
-              "/" + store.user.id + "/avatar/" + imageUri[0],
+              store.user.id + "/avatar." + imageUri[0],
               // imageUri[imageUri.length - 1],
-              img.assets[0].base64,
+              img.assets[0].uri,
               { upsert: true },
             )
           }
