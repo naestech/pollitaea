@@ -74,6 +74,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
           const fileData = Uint8Array.from(Buffer.from(selectedImage.base64, "base64"))
 
           if (hasAvatar) {
+            console.debug("Updating present avi")
             supabase.storage
               .from("avatars")
               .update(`/${store.user.id}/avatar.${isPng ? "png" : "jpg"}`, fileData, {
@@ -81,18 +82,27 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 contentType: `image/${isPng ? "png" : "jpg"}`,
                 cacheControl: "500",
               })
-              .then(({ data: { path }, error: { message } }) => {
-                if (message) {
-                  createToast(toast, "Error - " + message)
+              .then(({ data, error }) => {
+                console.log(data, error)
+
+                if (error?.message) {
+                  createToast(toast, "Error - " + error?.message)
                 } else {
-                  createToast(toast, "Successful save, now update db")
+                  console.debug("Good Upload")
+
+                  createToast(
+                    toast,
+                    "Successful save, image url - " +
+                      supabase.storage.from("avatars").getPublicUrl(data.path),
+                  )
                   supabase
                     .from("profiles")
                     .update({
-                      avatar_url:
-                        supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl + "",
+                      avatar_url: supabase.storage.from("avatars").getPublicUrl(data.path).data
+                        .publicUrl,
                     })
                     .eq("id", store.user.id)
+                    .then((res) => console.log(res))
                 }
               })
               .catch((err) => {
@@ -101,6 +111,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 console.log(err)
               })
           } else {
+            console.debug("Creating new avi")
             supabase.storage
               .from("avatars")
               .upload(`/${store.user.id}/avatar.${isPng ? "png" : "jpg"}`, fileData, {
@@ -109,18 +120,23 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 cacheControl: "500",
               })
               .then(({ data, error }) => {
-                if (error?.message) {
+                if (error?.message !== null) {
                   createToast(toast, "Error - " + error?.message)
                 } else {
-                  createToast(toast, "Successful initial save, now update db")
+                  console.debug("Good Upload")
+                  createToast(
+                    toast,
+                    "Successful save, image url - " +
+                      supabase.storage.from("avatars").getPublicUrl(data?.path),
+                  )
                   supabase
                     .from("profiles")
                     .update({
-                      avatar_url: supabase.storage.from("avatars").getPublicUrl(data.path).data
+                      avatar_url: supabase.storage.from("avatars").getPublicUrl(data?.path).data
                         .publicUrl,
                     })
                     .eq("id", store.user.id)
-                    .throwOnError()
+                    .then((res) => console.log(res))
                 }
               })
               .catch((err) => {
