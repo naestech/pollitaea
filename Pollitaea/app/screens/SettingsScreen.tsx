@@ -6,7 +6,13 @@ import { useStores } from "app/models"
 import { AppStackScreenProps } from "app/navigators"
 import { createToast } from "app/utils/common"
 import { supabase } from "app/utils/supabaseClient"
-import { launchCamera, launchImageLibrary } from "react-native-image-picker"
+import { Buffer } from "buffer"
+import {
+  MediaTypeOptions,
+  UIImagePickerPreferredAssetRepresentationMode,
+  getMediaLibraryPermissionsAsync,
+  launchImageLibraryAsync,
+} from "expo-image-picker"
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect } from "react"
 import { Avatar, Separator, Switch, XStack, YStack } from "tamagui"
@@ -17,7 +23,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
   // Pull in one of our MST stores
   const store = useStores()
   const toast = useToastController()
-  const hasAvatar = store.user?.avatar_url != null
+  const hasAvatar = store.user?.avatar_url !== ""
 
   useEffect(() => {
     if (!hasAvatar) {
@@ -40,28 +46,41 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
 
   const handleFileSelect = async () => {
     createToast(toast, "Change profile pic :)")
-    await ImagePicker.getMediaLibraryPermissionsAsync()
-    launchImageLibrary({ mediaType: "photo", quality: 0.4, assetRepresentationMode: "auto" })
-      .then((img) => {
-        console.log("Successfully picked image")
+    await getMediaLibraryPermissionsAsync()
 
-        if (!img.didCancel) {
+    launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.Images,
+      quality: 0.4,
+      aspect: [1, 1],
+      allowsEditing: true,
+      preferredAssetRepresentationMode: UIImagePickerPreferredAssetRepresentationMode.Automatic,
+      base64: true,
+    })
+      .then(async (img) => {
+        console.log("Successfully picked image")
+        if (!img.canceled) {
+          const selectedImage = img.assets[0]
+          const isPng = selectedImage.uri.toLowerCase().includes(".png")
           if (
             !(
-              // img.assets[0].uri.toLowerCase().includes(".png") ||
-              (
-                img.assets[0].uri.toLowerCase().includes(".jpeg") ||
-                img.assets[0].uri.toLowerCase().includes(".jpg")
-              )
+              selectedImage.uri.toLowerCase().includes(".png") ||
+              selectedImage.uri.toLowerCase().includes(".jpeg") ||
+              selectedImage.uri.toLowerCase().includes(".jpg")
             )
           ) {
             createToast(toast, "Only jpg and png files allowed")
             return
           }
+          const fileData = Uint8Array.from(Buffer.from(selectedImage.base64, "base64"))
+
           if (hasAvatar) {
             supabase.storage
               .from("avatars")
-              .update(store.user.id + "/avatar", img.assets[0].uri, { upsert: true })
+              .update(`/${store.user.id}/avatar.${isPng ? "png" : "jpg"}`, fileData, {
+                upsert: true,
+                contentType: `image/${isPng ? "png" : "jpg"}`,
+                cacheControl: "500",
+              })
               .then(({ data: { path }, error: { message } }) => {
                 if (message) {
                   createToast(toast, "Error - " + message)
@@ -70,25 +89,45 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                   supabase
                     .from("profiles")
                     .update({
-                      avatar_url: supabase.storage.from("avatars").getPublicUrl(path).data
-                        .publicUrl,
+                      avatar_url:
+                        supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl + "",
                     })
                     .eq("id", store.user.id)
                 }
               })
               .catch((err) => {
                 createToast(toast, err.message)
-                console.log("storage error")
+                console.log("storage update error")
                 console.log(err)
               })
           } else {
-            const imageUri = img.assets[0].uri.split(".")
-            supabase.storage.from("avatars").upload(
-              store.user.id + "/avatar." + imageUri[0],
-              // imageUri[imageUri.length - 1],
-              img.assets[0].uri,
-              { upsert: true },
-            )
+            supabase.storage
+              .from("avatars")
+              .upload(`/${store.user.id}/avatar.${isPng ? "png" : "jpg"}`, fileData, {
+                upsert: true,
+                contentType: `image/${isPng ? "png" : "jpg"}`,
+                cacheControl: "500",
+              })
+              .then(({ data, error }) => {
+                if (error?.message) {
+                  createToast(toast, "Error - " + error?.message)
+                } else {
+                  createToast(toast, "Successful initial save, now update db")
+                  supabase
+                    .from("profiles")
+                    .update({
+                      avatar_url: supabase.storage.from("avatars").getPublicUrl(data.path).data
+                        .publicUrl,
+                    })
+                    .eq("id", store.user.id)
+                    .throwOnError()
+                }
+              })
+              .catch((err) => {
+                createToast(toast, err.message)
+                console.log("storage insert error")
+                console.log(err)
+              })
           }
         }
       })
@@ -216,3 +255,5 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
     </Nav>
   )
 })
+
+//((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))

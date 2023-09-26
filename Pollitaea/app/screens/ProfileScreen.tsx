@@ -61,6 +61,8 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
         <Image
           alignSelf="center"
           borderRadius="$5"
+          borderColor={profile?.avatar_url ? undefined : "black"}
+          borderWidth={profile?.avatar_url ? undefined : 2}
           source={{
             uri: profile?.avatar_url,
             height: 150,
