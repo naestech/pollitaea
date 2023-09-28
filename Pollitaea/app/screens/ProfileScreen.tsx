@@ -35,7 +35,7 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
             createToast(toast, error.message)
           }
         })
-    } else if (!store.user?.avatar_url) {
+    } else if (!store.user?.createdAt) {
       // Has db user info, not just auth data
       supabase
         .from("profiles")

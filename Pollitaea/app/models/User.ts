@@ -53,24 +53,25 @@ export const UserModel = types
           .signOut()
           .then((res) => {
             console.log("successful logout")
-            navigation.navigate("Welcome")
           })
           .catch((err) => {
             console.log(err)
             console.log("Error during signout")
+            navigation.navigate("Welcome")
           })
-      }
-      self.authenticated = false
-      self.id = undefined
-      self.username = undefined
-      self.email = undefined
-      self.createdAt = undefined
-      self.avatar_url = undefined
-      self.external_url = undefined
-      self.full_name = undefined
-      self.location = undefined
-      self.role = undefined
-      self.tag = undefined
+        }
+        self.authenticated = false
+        self.id = undefined
+        self.username = undefined
+        self.email = undefined
+        self.createdAt = undefined
+        self.avatar_url = undefined
+        self.external_url = undefined
+        self.full_name = undefined
+        self.location = undefined
+        self.role = undefined
+        self.tag = undefined
+        navigation.navigate("Welcome")
     },
     hydrateProfile(profile: Profile, user: SupaUser) {
       self.authenticated = true
