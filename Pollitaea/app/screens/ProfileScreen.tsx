@@ -35,24 +35,10 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
             createToast(toast, error.message)
           }
         })
-    } else if (!store.user?.createdAt) {
-      // Has db user info, not just auth data
-      supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", store.user.id)
-        .single()
-        .then(({ data, error }) => {
-          if (error) console.error(error)
-          if (data) {
-            setProfile(data)
-            supabase.auth.getUser().then(({ data: { user } }) => {
-              store.user.hydrateProfile(data, user)
-            })
-          }
-        })
-    } // @ts-ignore
-    else setProfile(store.user)
+    } else {
+      // @ts-ignore
+      setProfile(store.user)
+    }
   }, [])
 
   return (

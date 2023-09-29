@@ -1,6 +1,6 @@
 import { User as SupaUser } from "@supabase/supabase-js"
-import { NavList } from "app/components"
 import { Profile } from "app/config/schema"
+import { createToast } from "app/utils/common"
 import { supabase } from "app/utils/supabaseClient"
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "./helpers/withSetPropAction"
@@ -24,7 +24,20 @@ export const UserModel = types
     createdAt: types.maybe(types.string),
   })
   .actions(withSetPropAction)
-  .views((self) => ({})) // eslint-disable-line @typescript-eslint/no-unused-vars
+  .views((self) => ({
+    get profileDetails() {
+      return {
+        avatar_url: self.avatar_url,
+        external_url: self.external_url,
+        full_name: self.full_name,
+        id: self.id,
+        location: self.location,
+        role: self.role,
+        tag: self.tag,
+        username: self.username,
+      }
+    },
+  })) // eslint-disable-line @typescript-eslint/no-unused-vars
   .actions((self) => ({
     trialLogin(username: string) {
       self.authenticated = false
@@ -39,39 +52,53 @@ export const UserModel = types
       self.role = "STOCK"
       self.tag = "Local voter"
     },
-    login(supaUser: SupaUser) {
-      self.authenticated = true
-      self.id = supaUser.id
-      self.username = supaUser.user_metadata.username
-      self.email = supaUser.email
-      self.createdAt = supaUser.created_at
+    login(toast: any, supaUser: SupaUser, userResult) {
+      if (userResult.error) {
+        console.log("Error during login, %s", userResult.error)
+        createToast(toast, "Error during login, try again later", 10)
+      } else {
+        self.authenticated = true
+        self.id = supaUser.id
+        self.username = userResult.profile.username
+        self.email = supaUser.email
+        self.createdAt = supaUser.created_at
+        self.avatar_url = userResult.profile.avatar_url
+        self.external_url = userResult.profile.external_url
+        self.full_name = userResult.profile.full_name
+        self.location = userResult.profile.location
+        self.role = userResult.profile.role
+        self.tag = userResult.profile.tag
+        console.log(self)
+
+        createToast(toast, "Welcome")
+      }
     },
-    logout(navigation: NavList) {
+    logout() {
       // Actually log out if this isn't a trial
       if (self.authenticated) {
         supabase.auth
           .signOut()
-          .then((res) => {
+          .then(() => {
             console.log("successful logout")
           })
           .catch((err) => {
             console.log(err)
             console.log("Error during signout")
-            navigation.navigate("Welcome")
           })
-        }
-        self.authenticated = false
-        self.id = undefined
-        self.username = undefined
-        self.email = undefined
-        self.createdAt = undefined
-        self.avatar_url = undefined
-        self.external_url = undefined
-        self.full_name = undefined
-        self.location = undefined
-        self.role = undefined
-        self.tag = undefined
-        navigation.navigate("Welcome")
+          .finally(() => {
+            self.authenticated = false
+            self.id = undefined
+            self.username = undefined
+            self.email = undefined
+            self.createdAt = undefined
+            self.avatar_url = undefined
+            self.external_url = undefined
+            self.full_name = undefined
+            self.location = undefined
+            self.role = undefined
+            self.tag = undefined
+          })
+      }
     },
     hydrateProfile(profile: Profile, user: SupaUser) {
       self.authenticated = true
@@ -87,6 +114,17 @@ export const UserModel = types
       self.tag = profile.tag
     },
   })) // eslint-disable-line @typescript-eslint/no-unused-vars
+
+export const fetchUser = (id: string) => {
+  return supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", id)
+    .single()
+    .then((res) => {
+      return { profile: res.data, error: res.error }
+    })
+}
 
 export interface User extends Instance<typeof UserModel> {}
 export interface UserSnapshotOut extends SnapshotOut<typeof UserModel> {}
