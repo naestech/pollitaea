@@ -100,18 +100,8 @@ export const UserModel = types
           })
       }
     },
-    hydrateProfile(profile: Profile, user: SupaUser) {
-      self.authenticated = true
-      self.id = user.id
-      self.username = profile.username
-      self.email = user.email
-      self.createdAt = user.created_at
-      self.avatar_url = profile.avatar_url
-      self.external_url = profile.external_url
-      self.full_name = profile.full_name
-      self.location = profile.location
-      self.role = profile.role
-      self.tag = profile.tag
+    updateProfile(aviUrl: string) {
+      self.avatar_url = aviUrl
     },
   })) // eslint-disable-line @typescript-eslint/no-unused-vars
 
