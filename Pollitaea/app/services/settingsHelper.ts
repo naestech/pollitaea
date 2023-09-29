@@ -48,7 +48,7 @@ export const handleProfileUpdate = async (toast, hasAvatar: boolean, store: Root
             .from("avatars")
             .update(`/${store.user.id}/avatar.${isPng ? "png" : "jpg"}`, fileData, {
               upsert: true,
-              contentType: `image/${isPng ? "png" : "jpg"}`,
+              contentType: `image/${isPng ? "png" : "jpeg"}`,
               cacheControl: "500",
             })
             .then(({ data, error }) => {
@@ -72,48 +72,13 @@ export const handleProfileUpdate = async (toast, hasAvatar: boolean, store: Root
               console.log("storage insert error")
               console.log(err)
             })
-          //   supabase.storage
-          //     .from("avatars")
-          //     .update(`/${store.user.id}/avatar.${isPng ? "png" : "jpg"}`, fileData, {
-          //       upsert: true,
-          //       contentType: `image/${isPng ? "png" : "jpg"}`,
-          //       cacheControl: "500",
-          //     })
-          //     .then(({ data, error }) => {
-          //       console.debug(data, error)
-
-          //       if (error?.message) {
-          //         createToast(toast, "Error - " + error?.message)
-          //       } else {
-          //         console.debug("Good Upload")
-
-          //         createToast(
-          //           toast,
-          //           "Successful save, image url - " +
-          //             supabase.storage.from("avatars").getPublicUrl(data.path),
-          //         )
-          //         supabase
-          //           .from("profiles")
-          //           .update({
-          //             avatar_url: supabase.storage.from("avatars").getPublicUrl(data.path).data
-          //               .publicUrl,
-          //           })
-          //           .eq("id", store.user.id)
-          //           .then((res) => console.log(res))
-          //       }
-          //     })
-          //     .catch((err) => {
-          //       createToast(toast, err.message)
-          //       console.log("storage update error")
-          //       console.log(err)
-          //     })
         } else {
           console.debug("Creating new avi")
           supabase.storage
             .from("avatars")
             .upload(`/${store.user.id}/avatar.${isPng ? "png" : "jpg"}`, fileData, {
               upsert: true,
-              contentType: `image/${isPng ? "png" : "jpg"}`,
+              contentType: `image/${isPng ? "png" : "jpeg"}`,
               cacheControl: "500",
             })
             .then(({ data, error }) => {
