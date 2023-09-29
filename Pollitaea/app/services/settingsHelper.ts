@@ -52,15 +52,11 @@ export const handleProfileUpdate = async (toast, hasAvatar: boolean, store: Root
               cacheControl: "500",
             })
             .then(({ data, error }) => {
-              if (error?.message !== null) {
+              if (error?.message) {
                 createToast(toast, "Error - " + error?.message)
               } else {
                 console.debug("Good Upload")
-                createToast(
-                  toast,
-                  "Successful save, image url - " +
-                    supabase.storage.from("avatars").getPublicUrl(data?.path),
-                )
+                createToast(toast, "Nice pic")
                 supabase
                   .from("profiles")
                   .update({
