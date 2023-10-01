@@ -92,6 +92,7 @@ const animations = createAnimations({
     stiffness: 50,
   },
   quick: {
+    duration: 10,
     damping: 20,
     mass: 1.2,
     stiffness: 250,

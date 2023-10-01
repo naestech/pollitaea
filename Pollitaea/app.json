@@ -53,7 +53,8 @@
       }
     },
     "plugins": [
-      "expo-localization"
+      "expo-localization",
+      "expo-image-picker"
     ]
   }
 }

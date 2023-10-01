@@ -1,6 +1,6 @@
 import { useToastController } from "@tamagui/toast"
 import { Text } from "app/components"
-import { useStores } from "app/models"
+import { fetchUser, useStores } from "app/models"
 import { AppStackScreenProps } from "app/navigators"
 import { APIError, SignUpResponse, api } from "app/services/api"
 import { createToast, fetchSecret } from "app/utils/common"
@@ -56,7 +56,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
   useEffect(() => {
     supabase.auth
       .getUser()
-      .then(() => createToast(toast, "Welcome back"))
+      .then((res) => (res.data ? createToast(toast, "Welcome back") : console.log("new user")))
       .catch()
   }, [])
 
@@ -117,19 +117,19 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
       } else {
         await supabase.auth
           .signInWithPassword({ email, password })
-          .then((res) => {
+          .then(async (res) => {
             if (res.data.user && res.data.user.confirmed_at == null) {
               createToast(toast, "Please confirm your email :)")
               supabase.auth.signOut().finally()
             } else if (res.error) {
               createToast(toast, res.error.message)
             } else {
-              createToast(toast, "Welcome")
-              store.user.login(res.data.user)
-              navigation.navigate("Home")
+              console.log("User ID" + res.data.user.id)
+              const userResult = await fetchUser(res.data.user.id)
+              console.log(userResult)
+              store.user.login(toast, res.data.user, userResult)
+              navigation.replace("Home")
             }
-            // set store
-            // route to home screen
           })
           .catch((err) => {
             console.log(err.message)

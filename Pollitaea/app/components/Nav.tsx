@@ -1,8 +1,7 @@
 import { RouteProp } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-import { Home, LogOut, Newspaper, Search, User2, Vote, X } from "@tamagui/lucide-icons"
+import { ChevronLeft, Home, Newspaper, Search, Settings, User2, Vote } from "@tamagui/lucide-icons"
 import { useToastController } from "@tamagui/toast"
-import { useStores } from "app/models"
 import { AppStackParamList } from "app/navigators"
 import { createToast } from "app/utils/common"
 import { supabase } from "app/utils/supabaseClient"
@@ -17,6 +16,7 @@ export type NavList =
   | NativeStackNavigationProp<AppStackParamList, "Home", undefined>
   | NativeStackNavigationProp<AppStackParamList, "Profile", undefined>
   | NativeStackNavigationProp<AppStackParamList, "Search", undefined>
+  | NativeStackNavigationProp<AppStackParamList, "Settings", undefined>
 /**
  * @description Passes page info to navbar, keeps propper button highlighted, etc,
  * Errors out if page doesn't exist yet
@@ -31,7 +31,7 @@ export interface NavProps {
    * @todo Add page property object for when pages need it
    */
   navigation: NavList
-  route: RouteProp<AppStackParamList, "Home" | "Welcome" | "Profile" | "Search">
+  route: RouteProp<AppStackParamList, "Home" | "Welcome" | "Profile" | "Search" | "Settings">
   children?: React.ReactNode
 }
 
@@ -42,7 +42,6 @@ export interface NavProps {
 export const Nav = observer(function Nav({ children, navigation, route }: NavProps) {
   const toast = useToastController()
   const isIos = Platform.OS === "ios"
-  const store = useStores()
 
   useEffect(() => {
     supabase.auth
@@ -56,6 +55,18 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
       .catch()
   }, [])
 
+  const backButton = (
+    <Button
+      marginHorizontal="$5"
+      marginVertical="$6"
+      icon={<ChevronLeft size="$1" />}
+      color="black"
+      variant="outlined"
+      borderColor="black"
+      onPressOut={() => navigation.pop()}
+    />
+  )
+
   return (
     <>
       <XStack
@@ -63,86 +74,99 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
         backgroundColor="whitesmoke"
         alignContent="space-around"
         justifyContent="space-between"
-        flexDirection="row-reverse"
+        flexDirection="row"
         elevationAndroid={2}
-        height="10%"
+        height="11%"
+        paddingTop="$3"
       >
-        {route.name === "Search" ? (
-          <Button
-            marginHorizontal="$5"
-            marginVertical="$6"
-            size="$4"
-            icon={X}
-            onPressOut={() => navigation.pop()}
-          />
+        {route.name === "Settings" ? (
+          backButton
         ) : (
           <Button
             marginHorizontal="$5"
             marginVertical="$6"
             size="$4"
-            icon={Search}
+            icon={<Settings size="$1" />}
+            color="black"
+            variant="outlined"
+            borderColor="black"
+            onPressOut={() => navigation.push("Settings")}
+          />
+        )}
+        {route.name === "Settings" ? undefined : route.name === "Search" ? (
+          backButton
+        ) : (
+          <Button
+            marginHorizontal="$5"
+            marginVertical="$6"
+            size="$4"
+            icon={<Search size="$1" />}
+            color="black"
+            variant="outlined"
+            borderColor="black"
             onPressOut={() => navigation.push("Search")}
           />
         )}
-        <Button
-          marginHorizontal="$5"
-          marginVertical="$6"
-          size="$4"
-          icon={LogOut}
-          onPressOut={() => store.user.logout(navigation)}
-        />
       </XStack>
       {children || undefined}
-      <Tabs
-        defaultValue="Home"
-        value={route.name}
-        separator={<Separator vertical />}
-        backgroundColor="green"
-        orientation="horizontal"
-        flexDirection="column"
-        marginHorizontal="auto"
-        width="103%"
-        marginLeft={-5}
-        alignContent="center"
-        borderRadius={0}
-        position="absolute"
-        bottom={isIos ? "0%" : "5.2%"}
-      >
-        <Tabs.List aria-label="Select screen" height="10%">
-          <Tabs.Tab
-            flex={1}
-            value="Home"
-            onPress={() => (route.name !== "Home" ? navigation.replace("Home") : undefined)}
-          >
-            <Home />
-          </Tabs.Tab>
-          <Tabs.Tab
-            flex={1}
-            value="Ballot"
-            // onPress={() =>
-            //   route.name !== "Ballot" ? navigation.replace("Ballot") : undefined
-            // }
-          >
-            <Vote />
-          </Tabs.Tab>
-          <Tabs.Tab
-            flex={1}
-            value="News"
-            // onPress={() =>
-            //   route.name !== "News" ? navigation.replace("News") : undefined
-            // }
-          >
-            <Newspaper />
-          </Tabs.Tab>
-          <Tabs.Tab
-            flex={1}
-            value="Profile"
-            onPress={() => (route.name !== "Profile" ? navigation.replace("Profile") : undefined)}
-          >
-            <User2 />
-          </Tabs.Tab>
-        </Tabs.List>
-      </Tabs>
+      {route.name === "Settings" ? undefined : (
+        <Tabs
+          defaultValue="Home"
+          value={route.name}
+          separator={<Separator vertical />}
+          backgroundColor="green"
+          orientation="horizontal"
+          flexDirection="column"
+          marginHorizontal="auto"
+          width="103%"
+          marginLeft={-5}
+          alignContent="center"
+          borderRadius={0}
+          position="absolute"
+          bottom={isIos ? "0%" : "5.2%"}
+        >
+          <Tabs.List aria-label="Select screen" height="10%">
+            <Tabs.Tab
+              flex={1}
+              value="Home"
+              onPress={() => (route.name !== "Home" ? navigation.replace("Home") : undefined)}
+            >
+              <Home />
+            </Tabs.Tab>
+            <Tabs.Tab
+              flex={1}
+              value="Ballot"
+              // onPress={() =>
+              //   route.name !== "Ballot" ? navigation.replace("Ballot") : undefined
+              // }
+            >
+              <Vote />
+            </Tabs.Tab>
+            <Tabs.Tab
+              flex={1}
+              value="News"
+              // onPress={() =>
+              //   route.name !== "News" ? navigation.replace("News") : undefined
+              // }
+            >
+              <Newspaper />
+            </Tabs.Tab>
+            <Tabs.Tab
+              flex={1}
+              value="Profile"
+              onPress={() =>
+                route.name !== "Profile"
+                  ? navigation.replace("Profile")
+                  : route.params?.userId
+                  ? navigation.replace("Profile")
+                  : undefined
+              }
+            >
+              <User2 />
+            </Tabs.Tab>
+          </Tabs.List>
+        </Tabs>
+      )}
     </>
   )
 })

@@ -1,10 +1,10 @@
 /* eslint-disable react-native/no-color-literals */
 /* eslint-disable react-native/no-inline-styles */
-import { useNavigation } from "@react-navigation/native"
 import { FlashList } from "@shopify/flash-list"
 import { Search, Verified } from "@tamagui/lucide-icons"
 import { useToastController } from "@tamagui/toast"
 import { Nav } from "app/components"
+import { Profile } from "app/config/schema"
 import { AppStackScreenProps } from "app/navigators"
 import { createToast } from "app/utils/common"
 import { supabase } from "app/utils/supabaseClient"
@@ -78,6 +78,8 @@ export const SearchScreen: FC<SearchScreenProps> = observer(({ route, navigation
         estimatedItemSize={76}
         renderItem={({ item }) => (
           <QueryResult
+            // @ts-ignore Source of js magic on line #113
+            navigation={navigation}
             key={item.id}
             avatar_url={item.avatar_url}
             full_name={item.full_name}
@@ -92,8 +94,7 @@ export const SearchScreen: FC<SearchScreenProps> = observer(({ route, navigation
   )
 })
 
-const QueryResult = (item: SupabaseResult) => {
-  const navigation = useNavigation()
+const QueryResult = (item: Profile) => {
   return (
     <XStack
       key={item.id}
@@ -107,8 +108,10 @@ const QueryResult = (item: SupabaseResult) => {
         borderWidth: 1.2,
         borderColor: "black",
       }}
-      // @ts-ignore
-      onPressOut={() => navigation.navigate("Profile", { userId: item.id })}
+      onPressOut={() =>
+        // @ts-ignore js magic going on right here. Param is a "Profile", but I'm also passing navigation above
+        item.navigation.replace("Profile", { userId: item.id })
+      }
     >
       <Avatar
         borderColor="aliceblue"
@@ -117,15 +120,15 @@ const QueryResult = (item: SupabaseResult) => {
         marginHorizontal="$3"
         marginVertical="$2"
       >
-        <Avatar.Image src={item.avatar_url} />
+        <Avatar.Image src={item?.avatar_url} />
         <Avatar.Fallback borderColor="aqua" />
       </Avatar>
       {item.role === "GOV" ? (
         <YStack justifyContent="center" marginVertical="auto">
-          <Text color="black">{item.full_name}</Text>
+          <Text color="black">{item?.full_name}</Text>
           <XStack space="$2">
             <Text color="gray" opacity={0.8}>
-              {"@" + item.username}
+              {"@" + item?.username}
             </Text>
             <Verified size="$1" color="blue" />
           </XStack>
@@ -133,7 +136,7 @@ const QueryResult = (item: SupabaseResult) => {
       ) : (
         <YStack>
           <YStack justifyContent="center" marginVertical="auto">
-            <Text color="black">{item.full_name}</Text>
+            <Text color="black">{item?.full_name}</Text>
             <XStack space="$2">
               <Text color="gray" opacity={0.8}>
                 {"@" + item.username}

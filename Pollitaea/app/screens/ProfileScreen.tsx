@@ -35,24 +35,10 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
             createToast(toast, error.message)
           }
         })
-    } else if (!store.user?.avatar_url) {
-      // Has db user info, not just auth data
-      supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", store.user.id)
-        .single()
-        .then(({ data, error }) => {
-          if (error) console.error(error)
-          if (data) {
-            setProfile(data)
-            supabase.auth.getUser().then(({ data: { user } }) => {
-              store.user.hydrateProfile(data, user)
-            })
-          }
-        })
-    } // @ts-ignore
-    else setProfile(store.user)
+    } else {
+      // @ts-ignore
+      setProfile(store.user)
+    }
   }, [])
 
   return (
@@ -61,6 +47,8 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
         <Image
           alignSelf="center"
           borderRadius="$5"
+          borderColor={profile?.avatar_url ? "black" : undefined}
+          borderWidth={profile?.avatar_url ? 2 : undefined}
           source={{
             uri: profile?.avatar_url,
             height: 150,
@@ -87,15 +75,17 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
             {profile?.external_url}
           </Text>
         </YStack>
-        <Button
-          disabled={profile?.id === store.user.id}
-          backgroundColor={profile?.id === store.user.id ? undefined : "$juicyGreen"}
-          alignSelf="center"
-          borderRadius="$8"
-          onPress={() => createToast(toast, "Followed")}
-        >
-          {profile?.id === store.user.id ? "Edit Profile" : "Follow"}
-        </Button>
+        {profile?.id !== store.user.id ? (
+          <Button
+            disabled={profile?.id === store.user.id}
+            backgroundColor={profile?.id === store.user.id ? undefined : "$juicyGreen"}
+            alignSelf="center"
+            borderRadius="$8"
+            onPress={() => createToast(toast, "Followed")}
+          >
+            Follow
+          </Button>
+        ) : undefined}
       </YStack>
     </Nav>
   )
