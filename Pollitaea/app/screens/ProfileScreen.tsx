@@ -75,15 +75,17 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(({ route, navigati
             {profile?.external_url}
           </Text>
         </YStack>
-        <Button
-          disabled={profile?.id === store.user.id}
-          backgroundColor={profile?.id === store.user.id ? undefined : "$juicyGreen"}
-          alignSelf="center"
-          borderRadius="$8"
-          onPress={() => createToast(toast, "Followed")}
-        >
-          {profile?.id === store.user.id ? "Edit Profile" : "Follow"}
-        </Button>
+        {profile?.id !== store.user.id ? (
+          <Button
+            disabled={profile?.id === store.user.id}
+            backgroundColor={profile?.id === store.user.id ? undefined : "$juicyGreen"}
+            alignSelf="center"
+            borderRadius="$8"
+            onPress={() => createToast(toast, "Followed")}
+          >
+            Follow
+          </Button>
+        ) : undefined}
       </YStack>
     </Nav>
   )
