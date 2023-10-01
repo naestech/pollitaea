@@ -154,7 +154,13 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
             <Tabs.Tab
               flex={1}
               value="Profile"
-              onPress={() => (route.name !== "Profile" ? navigation.replace("Profile") : undefined)}
+              onPress={() =>
+                route.name !== "Profile"
+                  ? navigation.replace("Profile")
+                  : route.params?.userId
+                  ? navigation.replace("Profile")
+                  : undefined
+              }
             >
               <User2 />
             </Tabs.Tab>
