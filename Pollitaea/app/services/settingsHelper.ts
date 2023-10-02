@@ -15,7 +15,7 @@ import {
  * @param hasAvatar
  * @param store
  */
-export const handleProfileUpdate = async (toast, hasAvatar: boolean, store: RootStore) => {
+export const handleProfilePicUpdate = async (toast, hasAvatar: boolean, store: RootStore) => {
   await getMediaLibraryPermissionsAsync()
 
   launchImageLibraryAsync({
