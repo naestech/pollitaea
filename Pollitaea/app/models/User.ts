@@ -100,8 +100,18 @@ export const UserModel = types
           })
       }
     },
-    updateProfile(aviUrl: string) {
+    updateProfilePic(aviUrl: string) {
       self.avatar_url = aviUrl
+    },
+    hydrateProfile(profile: Profile) {
+      self.avatar_url = profile.avatar_url
+      self.external_url = profile.external_url
+      self.full_name = profile.full_name
+      self.id = profile.id
+      self.location = profile.location
+      self.role = profile.role
+      self.tag = profile.tag
+      self.username = profile.username
     },
   })) // eslint-disable-line @typescript-eslint/no-unused-vars
 
