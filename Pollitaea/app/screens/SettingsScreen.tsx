@@ -14,9 +14,9 @@ import {
   Avatar,
   Button,
   Input,
-  Label,
   Separator,
   Sheet,
+  Spinner,
   Switch,
   TextArea,
   XStack,
@@ -32,6 +32,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
   const store = useStores()
   const tokens = getTokens()
   const toast = useToastController()
+  const [isLoading, setIsLoading] = useState(false)
   const [editOption, setEditOption] = useState<undefined | "User" | "Tag">(undefined)
   const [username, setUsername] = useState(store.user.username)
   const [validUsername, setValidUsername] = useState(true)
@@ -46,9 +47,9 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
 
   const handleProfileUpdate = (editRequest: "User" | "Tag") => {
     console.debug(editRequest)
-
+    setIsLoading(true)
     if (editOption === "Tag") {
-      if (website?.length === 0 || urlVal.test(website)) {
+      if (website?.length !== 0 || urlVal.test(website)) {
         // Update db
         supabase
           .from("profiles")
@@ -58,13 +59,15 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
           .single()
           .then(({ data, error }) => {
             if (data) {
-              console.debug("Updated Profile")
+              createToast(toast, "Updated Profile")
               console.debug(data)
               store.user.hydrateProfile(data)
+              setIsLoading(false)
             } else {
               console.debug("Error during profile update")
               console.debug(error)
               createToast(toast, "Error during profile update")
+              setIsLoading(false)
             }
           })
       } else {
@@ -87,7 +90,12 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
         )
         .then()
         .catch()
+        .finally(() => {
+          setIsLoading(false)
+          setEditOption(undefined)
+        })
     }
+    setIsLoading(false)
   }
 
   return (
@@ -230,7 +238,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
             setValidEmail(true)
           }
         }}
-        snapPoints={[50]}
+        snapPoints={[45]}
         animation="quick"
       >
         <Sheet.Overlay animation="quick" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
@@ -240,8 +248,14 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
           padding="$4"
           justifyContent="center"
           alignItems="center"
+          paddingVertical="auto"
           space="$5"
         >
+          <Text
+            text={
+              editOption === "User" ? "Update username and email" : "Update tagline and website"
+            }
+          />
           {editOption === "User" ? (
             <YStack space width="70%" alignItems="center">
               <Input
@@ -280,10 +294,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
               />
             </YStack>
           ) : (
-            <YStack space="$1" width="100%" alignItems="center">
-              <Label color="$juicyGreen" htmlFor="tagline">
-                Tagline
-              </Label>
+            <YStack space width="100%" alignItems="center">
               <TextArea
                 borderRadius={5}
                 width="75%"
@@ -301,9 +312,6 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 importantForAutofill="auto"
                 onChangeText={(e) => setTag(e)}
               />
-              <Label color="$juicyGreen" htmlFor="personal-website">
-                External Url
-              </Label>
               <Input
                 borderRadius={5}
                 width="75%"
@@ -323,7 +331,18 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
               />
             </YStack>
           )}
-          <Button size="$4" width="50%" onPressOut={() => handleProfileUpdate(editOption)}>
+          <Button
+            size="$4"
+            width="50%"
+            onPressOut={() => {
+              setIsLoading(true)
+              handleProfileUpdate(editOption)
+              setIsLoading(false)
+              setEditOption(undefined)
+            }}
+            disabled={isLoading}
+            icon={isLoading ? () => <Spinner /> : undefined}
+          >
             Submit
           </Button>
         </Sheet.Frame>

@@ -114,14 +114,12 @@ const QueryResult = (item: Profile) => {
       }
     >
       <Avatar
-        borderColor="aliceblue"
         size="$6"
-        borderRadius="$5"
         marginHorizontal="$3"
         marginVertical="$2"
       >
         <Avatar.Image src={item?.avatar_url} />
-        <Avatar.Fallback borderColor="aqua" />
+        <Avatar.Fallback />
       </Avatar>
       {item.role === "GOV" ? (
         <YStack justifyContent="center" marginVertical="auto">
