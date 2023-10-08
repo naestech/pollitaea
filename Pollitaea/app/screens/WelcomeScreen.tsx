@@ -27,8 +27,8 @@ export type WelcomeScreenProps = AppStackScreenProps<"Welcome">
 
 // Email validation regex
 export const emailVal = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const numberPattern = /^[0-9]+$/
-const usernamePattern = /^[a-zA-Z0-9!@#$%^&*()-_=+[\]{}|;:'",.<>/?`~]+$/ // /^[a-zA-Z0-9_]+$/
+export const numberPattern = /^[0-9]+$/
+export const usernamePattern = /^[a-zA-Z0-9!@#$%^&*()-_=+[\]{}|;:'",.<>/?`~]+$/ // /^[a-zA-Z0-9_]+$/
 
 export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeScreen({
   navigation,
