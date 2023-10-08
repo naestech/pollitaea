@@ -6,7 +6,7 @@ import { useStores } from "app/models"
 import { AppStackScreenProps } from "app/navigators"
 import { api } from "app/services/api"
 import { handleProfilePicUpdate } from "app/services/settingsHelper"
-import { createToast } from "app/utils/common"
+import { createToast, fetchSecret } from "app/utils/common"
 import { supabase } from "app/utils/supabaseClient"
 import { observer } from "mobx-react-lite"
 import React, { FC, useState } from "react"
@@ -45,7 +45,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
   const urlVal =
     /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi
 
-  const handleProfileUpdate = (editRequest: "User" | "Tag") => {
+  const handleProfileUpdate = async (editRequest: "User" | "Tag") => {
     console.debug(editRequest)
     setIsLoading(true)
     if (editOption === "Tag") {
@@ -78,18 +78,20 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
       if (username === "" || usernamePattern.test(username)) setValidEmail(false)
 
       api.apisauce
-        .put(
-          "/api/auth",
-          editRequest === "User"
-            ? {
-                method: editRequest,
-                username,
-                email,
-              }
-            : { method: editRequest, tag, website },
-        )
-        .then()
-        .catch()
+        .put("/api/auth", {
+          secret: await fetchSecret(),
+          id: store.user.id,
+          username,
+          email,
+        })
+        .then((res) => {
+          createToast(toast, res.data as string)
+          if (res.status < 300 && email !== store.user.email) {
+            store.user.logout()
+            navigation.navigate("Welcome")
+          }
+        })
+        .catch((err) => createToast(toast, err.message))
         .finally(() => {
           setIsLoading(false)
           setEditOption(undefined)
@@ -266,7 +268,6 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 backgroundColor="$accentBg"
                 paddingHorizontal="$4"
                 value={username}
-                defaultValue={store.user.username}
                 aria-label="username"
                 inputMode="text"
                 importantForAutofill="auto"
@@ -283,7 +284,6 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 backgroundColor="$accentBg"
                 paddingHorizontal="$4"
                 value={email}
-                defaultValue={store.user.email}
                 aria-label="email"
                 inputMode="email"
                 importantForAutofill="auto"
@@ -305,7 +305,6 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 backgroundColor="$accentBg"
                 paddingHorizontal="$4"
                 value={tag}
-                defaultValue={store.user.tag}
                 aria-label="tagline"
                 id="tagline"
                 inputMode="text"
@@ -322,7 +321,6 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 backgroundColor="$accentBg"
                 paddingHorizontal="$4"
                 value={website}
-                defaultValue={store.user.external_url}
                 aria-label="personal-website"
                 id="personal-website"
                 inputMode="url"
@@ -334,9 +332,9 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
           <Button
             size="$4"
             width="50%"
-            onPressOut={() => {
+            onPressOut={async () => {
               setIsLoading(true)
-              handleProfileUpdate(editOption)
+              await handleProfileUpdate(editOption)
               setIsLoading(false)
               setEditOption(undefined)
             }}
