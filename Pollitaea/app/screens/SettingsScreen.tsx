@@ -284,6 +284,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 backgroundColor="$accentBg"
                 paddingHorizontal="$4"
                 value={email}
+                defaultValue={email}
                 aria-label="email"
                 inputMode="email"
                 importantForAutofill="auto"
@@ -301,7 +302,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 numberOfLines={2}
                 maxLength={25}
                 color="$accent"
-                placeholder={store.user.tag?.length === 0 ? store.user.tag : "Lorem ipsum"}
+                placeholder={tag}
                 backgroundColor="$accentBg"
                 paddingHorizontal="$4"
                 value={tag}
@@ -315,9 +316,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
                 borderRadius={5}
                 width="75%"
                 color="$accent"
-                placeholder={
-                  store.user.external_url?.length < 3 ? store.user.external_url : "lorem.ipsum.com"
-                }
+                placeholder={website}
                 backgroundColor="$accentBg"
                 paddingHorizontal="$4"
                 value={website}
