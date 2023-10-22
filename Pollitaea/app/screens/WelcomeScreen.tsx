@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import { useToastController } from "@tamagui/toast"
 import { Text } from "app/components"
 import { fetchUser, useStores } from "app/models"
@@ -5,19 +6,21 @@ import { AppStackScreenProps } from "app/navigators"
 import { APIError, SignUpResponse, api } from "app/services/api"
 import { createToast, fetchSecret } from "app/utils/common"
 import { supabase } from "app/utils/supabaseClient"
+import { Platform } from "expo-modules-core"
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect, useState } from "react"
+import { KeyboardAvoidingView } from "react-native"
 import {
   Anchor,
   Button,
   Form,
   Image,
   Input,
+  ScrollView,
   Separator,
   Spinner,
-  View,
   XStack,
-  YStack,
+  YStack
 } from "tamagui"
 import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 
@@ -147,143 +150,159 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
   }
 
   return (
-    <YStack style={$containerInsets}>
-      <View marginTop="$5" paddingHorizontal="$5" justifyContent="space-between" space="$5">
-        <Image source={welcomeLogo} paddingHorizontal="$4" alt="Transparent logo" />
-        <Separator alignSelf="stretch" />
-        <Form
-          alignItems="center"
-          marginTop="auto"
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView>
+        <YStack
+          style={$containerInsets}
+          marginTop="$5"
+          paddingHorizontal="$5"
+          justifyContent="space-between"
           space="$5"
-          borderWidth={0}
-          padding="$8"
-          onSubmit={handleAuth}
         >
-          {/* Sign up form fields */}
-          <Input
-            borderRadius={5}
-            width="90%"
-            color="$accent"
-            placeholder="Erykah"
-            backgroundColor="$accentBg"
+          <Image
+            source={welcomeLogo}
             paddingHorizontal="$4"
-            value={fName}
-            aria-label="first-name"
-            textContentType="givenName"
-            inputMode="text"
-            importantForAutofill="auto"
-            display={isLogin ? "none" : undefined}
-            onChangeText={setFName}
+            alt="Transparent logo"
+            alignSelf="center"
           />
-          <Input
-            borderRadius={5}
-            width="90%"
-            color="$accent"
-            placeholder="Badu"
-            backgroundColor="$accentBg"
-            paddingHorizontal="$4"
-            value={lName}
-            aria-label="last-name"
-            textContentType="familyName"
-            inputMode="text"
-            importantForAutofill="auto"
-            display={isLogin ? "none" : undefined}
-            onChangeText={setLName}
-          />
-          <Input
-            borderRadius={5}
-            width="90%"
-            color="$accent"
-            placeholder={validUsername ? "Username" : "Enter a valid email"}
-            backgroundColor="$accentBg"
-            paddingHorizontal="$4"
-            value={username}
-            aria-label="username"
-            inputMode="text"
-            importantForAutofill="auto"
-            display={isLogin ? "none" : undefined}
-            onChangeText={(e) => {
-              setValidUsername(true)
-              setUsername(e)
-            }}
-          />
-          {/* Login form fields */}
-          <Input
-            borderRadius={5}
-            width="90%"
-            color="$accent"
-            placeholder={validEmail ? "Email" : "Enter a valid email"}
-            backgroundColor="$accentBg"
-            paddingHorizontal="$4"
-            value={email}
-            aria-label="email"
-            textContentType="emailAddress"
-            inputMode="email"
-            importantForAutofill="auto"
-            onChangeText={(e) => {
-              setValidEmail(true)
-              setEmail(e)
-            }}
-          />
-          <Input
-            borderRadius={5}
-            width="90%"
-            color="$accent"
-            placeholder={validPassword ? "Password" : "Enter a valid password"}
-            backgroundColor="$accentBg"
-            paddingHorizontal="$4"
-            value={password}
-            aria-label="password"
-            textContentType="password"
-            secureTextEntry
-            inputMode="text"
-            importantForAutofill="auto"
-            onChangeText={(e) => {
-              setValidPassword(true)
-              setPassword(e)
-            }}
-          />
-          <Input
-            borderRadius={5}
-            width="90%"
-            color="$accent"
-            placeholder="Password confirmation"
-            backgroundColor="$accentBg"
-            paddingHorizontal="$4"
-            value={password}
-            aria-label="password"
-            textContentType="password"
-            secureTextEntry
-            inputMode="text"
-            importantForAutofill="auto"
-            display={isLogin ? "none" : undefined}
-            onChangeText={(e) => {
-              setValidPasswordConfirm(true)
-              setPasswordConfirm(e)
-            }}
-          />
-          <Form.Trigger asChild="except-style" disabled={status === "submitting"}>
-            <Button size="$5" icon={status === "submitting" ? () => <Spinner /> : undefined}>
-              {isLogin ? "Log In" : "Sign Up"}
-            </Button>
-          </Form.Trigger>
-        </Form>
-        <XStack justifyContent="center">
-          <Text
-            size="md"
-            text={isLogin ? "Don't have an account? " : "Already have an account? "}
-          />
-          <Anchor
-            marginVertical="auto"
-            color="darkolivegreen"
-            textDecorationLine="none"
-            textDecorationColor="black"
-            onPressOut={() => setIsLogin(!isLogin)}
+          <Separator alignSelf="stretch" />
+          <Form
+            alignItems="center"
+            marginTop="auto"
+            space="$5"
+            borderWidth={0}
+            padding="$8"
+            onSubmit={handleAuth}
           >
-            {isLogin ? "Sign Up" : "Log In"}
-          </Anchor>
-        </XStack>
-      </View>
-    </YStack>
+            {/* Sign up form fields */}
+            <Input
+              borderRadius={5}
+              width="90%"
+              color="$accent"
+              placeholder="Erykah"
+              backgroundColor="$accentBg"
+              paddingHorizontal="$4"
+              value={fName}
+              aria-label="first-name"
+              textContentType="givenName"
+              inputMode="text"
+              importantForAutofill="auto"
+              display={isLogin ? "none" : undefined}
+              onChangeText={setFName}
+            />
+            <Input
+              borderRadius={5}
+              width="90%"
+              color="$accent"
+              placeholder="Badu"
+              backgroundColor="$accentBg"
+              paddingHorizontal="$4"
+              value={lName}
+              aria-label="last-name"
+              textContentType="familyName"
+              inputMode="text"
+              importantForAutofill="auto"
+              display={isLogin ? "none" : undefined}
+              onChangeText={setLName}
+            />
+            <Input
+              borderRadius={5}
+              width="90%"
+              color="$accent"
+              placeholder={validUsername ? "Username" : "Enter a valid email"}
+              backgroundColor="$accentBg"
+              paddingHorizontal="$4"
+              value={username}
+              aria-label="username"
+              inputMode="text"
+              importantForAutofill="auto"
+              display={isLogin ? "none" : undefined}
+              onChangeText={(e) => {
+                setValidUsername(true)
+                setUsername(e)
+              }}
+            />
+            {/* Login form fields */}
+            <Input
+              borderRadius={5}
+              width="90%"
+              color="$accent"
+              placeholder={validEmail ? "Email" : "Enter a valid email"}
+              backgroundColor="$accentBg"
+              paddingHorizontal="$4"
+              value={email}
+              aria-label="email"
+              textContentType="emailAddress"
+              inputMode="email"
+              importantForAutofill="auto"
+              onChangeText={(e) => {
+                setValidEmail(true)
+                setEmail(e)
+              }}
+            />
+            <Input
+              borderRadius={5}
+              width="90%"
+              color="$accent"
+              placeholder={validPassword ? "Password" : "Enter a valid password"}
+              backgroundColor="$accentBg"
+              paddingHorizontal="$4"
+              value={password}
+              aria-label="password"
+              textContentType="password"
+              secureTextEntry
+              inputMode="text"
+              importantForAutofill="auto"
+              onChangeText={(e) => {
+                setValidPassword(true)
+                setPassword(e)
+              }}
+            />
+            <Input
+              borderRadius={5}
+              width="90%"
+              color="$accent"
+              placeholder="Password confirmation"
+              backgroundColor="$accentBg"
+              paddingHorizontal="$4"
+              value={passwordConfirm}
+              aria-label="password"
+              textContentType="password"
+              secureTextEntry
+              inputMode="text"
+              importantForAutofill="auto"
+              display={isLogin ? "none" : undefined}
+              onChangeText={(e) => {
+                setValidPasswordConfirm(true)
+                setPasswordConfirm(e)
+              }}
+            />
+            <Form.Trigger asChild="except-style" disabled={status === "submitting"}>
+              <Button size="$5" icon={status === "submitting" ? () => <Spinner /> : undefined}>
+                {isLogin ? "Log In" : "Sign Up"}
+              </Button>
+            </Form.Trigger>
+          </Form>
+          <XStack justifyContent="center">
+            <Text
+              size="md"
+              text={isLogin ? "Don't have an account? " : "Already have an account? "}
+            />
+            <Anchor
+              marginVertical="auto"
+              color="darkolivegreen"
+              textDecorationLine="none"
+              textDecorationColor="black"
+              onPressOut={() => setIsLogin(!isLogin)}
+            >
+              {isLogin ? "Sign Up" : "Log In"}
+            </Anchor>
+          </XStack>
+        </YStack>
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 })
