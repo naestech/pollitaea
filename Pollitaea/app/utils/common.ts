@@ -4,9 +4,17 @@ import { api } from "../services/api/api"
 /**
  * Fetch API Secret
  */
-export const fetchSecret = async () => {
+export const fetchSecret = async (id?: string) => {
   return await api.apisauce
-    .get<ApiSecret>("api/auth")
+    .get<ApiSecret>(
+      "api/auth",
+      {},
+      {
+        headers: {
+          id: id || "NEW_USER",
+        },
+      },
+    )
     .then((res) => res.data.secret)
     .catch(() => {
       return null

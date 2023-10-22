@@ -79,7 +79,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(({ navigation, r
 
       api.apisauce
         .put("/api/auth", {
-          secret: await fetchSecret(),
+          secret: await fetchSecret(store.user.id),
           id: store.user.id,
           username,
           email,
