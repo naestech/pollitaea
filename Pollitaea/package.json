@@ -133,7 +133,7 @@
     "react-test-renderer": "18.2.0",
     "reactotron-core-client": "^2.8.10",
     "regenerator-runtime": "^0.13.4",
-    "supabase": "^1.93.0",
+    "supabase": "^1.106.1",
     "ts-jest": "29",
     "typescript": "^5.1.3"
   },

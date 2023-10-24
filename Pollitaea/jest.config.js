@@ -1,5 +1,5 @@
 const { defaults: tsjPreset } = require("ts-jest/presets")
-
+process.env.TAMAGUI_TARGET="NATIVE"
 /** @type {import('@jest/types').Config.ProjectConfig} */
 module.exports = {
   ...tsjPreset,

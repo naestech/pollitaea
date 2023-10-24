@@ -1,11 +1,13 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { createUserDefaultModel } from "./User"
+import { createAddressDefaultModel } from "./Address"
 
 /**
  * A RootStore model.
  */
 export const RootStoreModel = types.model("RootStore").props({
   user: createUserDefaultModel(),
+  address: createAddressDefaultModel()
 })
 
 /**
