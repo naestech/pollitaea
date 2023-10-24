@@ -20,7 +20,7 @@ import {
   Separator,
   Spinner,
   XStack,
-  YStack
+  YStack,
 } from "tamagui"
 import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 
@@ -59,7 +59,14 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
   useEffect(() => {
     supabase.auth
       .getUser()
-      .then((res) => (res.data ? createToast(toast, "Welcome back") : console.log("new user")))
+      .then((res) => {
+        if (res.data) {
+          createToast(toast, "Welcome back")
+          navigation.replace("Home")
+        } else {
+          console.log("new user")
+        }
+      })
       .catch()
   }, [])
 
