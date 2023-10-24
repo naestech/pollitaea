@@ -35,6 +35,7 @@ export type AppStackParamList = {
   Profile: { userId?: string }
   Search: undefined
 	Settings: undefined
+	Ballot: undefined
 	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -69,6 +70,7 @@ const AppStack = observer(function AppStack() {
       />
       <Stack.Screen name="Search" component={Screens.SearchScreen} />
 			<Stack.Screen name="Settings" component={Screens.SettingsScreen} />
+			<Stack.Screen name="Ballot" component={Screens.BallotScreen} />
 			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )

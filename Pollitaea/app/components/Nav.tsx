@@ -14,6 +14,7 @@ import { Button, Separator, Tabs, XStack } from "tamagui"
 export type NavList =
   | NativeStackNavigationProp<AppStackParamList, "Welcome", undefined>
   | NativeStackNavigationProp<AppStackParamList, "Home", undefined>
+  | NativeStackNavigationProp<AppStackParamList, "Ballot", undefined>
   | NativeStackNavigationProp<AppStackParamList, "Profile", undefined>
   | NativeStackNavigationProp<AppStackParamList, "Search", undefined>
   | NativeStackNavigationProp<AppStackParamList, "Settings", undefined>
@@ -31,7 +32,10 @@ export interface NavProps {
    * @todo Add page property object for when pages need it
    */
   navigation: NavList
-  route: RouteProp<AppStackParamList, "Home" | "Welcome" | "Profile" | "Search" | "Settings">
+  route: RouteProp<
+    AppStackParamList,
+    "Welcome" | "Home" | "Ballot" | "Profile" | "Search" | "Settings"
+  >
   children?: React.ReactNode
 }
 
@@ -136,9 +140,9 @@ export const Nav = observer(function Nav({ children, navigation, route }: NavPro
             <Tabs.Tab
               flex={1}
               value="Ballot"
-              // onPress={() =>
-              //   route.name !== "Ballot" ? navigation.replace("Ballot") : undefined
-              // }
+              onPress={() =>
+                route.name !== "Ballot" ? navigation.replace("Ballot") : undefined
+              }
             >
               <Vote />
             </Tabs.Tab>
